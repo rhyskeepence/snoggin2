@@ -1,0 +1,54 @@
+<html>
+<head>
+    <title>Monthly performance stats</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://raw.github.com/flot/flot/master/jquery.flot.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://raw.github.com/flot/flot/master/jquery.flot.crosshair.js" type="text/javascript" charset="utf-8"></script>
+
+    <style type="text/css">
+        body {
+            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+            font-size: 18px;
+        }
+    </style>
+
+    <script type="text/javascript">
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+        }
+
+        function doPlot(axisDefinition) {
+            $.plot($("#chart"),
+                    axisDefinition,
+                    {
+                        xaxes:[
+                            { mode:'time' }
+                        ],
+                        yaxes:[
+                            { min:0 }
+                        ],
+                        legend:{ position:'ne' }
+                    });
+        }
+    </script>
+
+</head>
+<body>
+
+<div class="container">
+
+    <div id="chart" style="width:90%;height:800px;">
+        Please wait...<br/>
+
+        <div style="display:none; text-align: center;" id="ajax-loader">
+            <img src="/images/ajax-loader.gif" width="16" height="16"/>
+        </div>
+    </div>
+
+    <lift:stats />
+
+</div>
+
+</body>
+</html>
