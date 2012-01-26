@@ -5,6 +5,7 @@ import com.mongodb.casbah.MongoCollection
 import com.mongodb.casbah.query.Imports._
 import com.mongodb.casbah.commons.{MongoDBObjectBuilder, MongoDBObject}
 import com.mongodb.casbah.map_reduce.MapReduceStandardOutput
+import org.joda.time.DateTime
 
 
 class MongoDataPointStore(mongoStorage: MongoStorage) {
@@ -13,31 +14,50 @@ class MongoDataPointStore(mongoStorage: MongoStorage) {
     withContent {
       dataPointCollection =>
 
-        dataPointCollection.ensureIndex("metric")
+        dataPointCollection.ensureIndex("env")
 
-        items
-          .map(dataPointToMongoObject)
-          .foreach { dataPointCollection += _.result }
-
+        items.foreach {
+          dataPointCollection += dataPointToMongoObject(_).result
+        }
     }
   }
 
   def mapReduce(query: Option[DBObject], map: JSFunction, reduce: JSFunction, finalizeFunction: Option[JSFunction]) = {
     withContent {
       contentCollection =>
-        contentCollection.mapReduce(map, reduce, MapReduceStandardOutput("map-reduce-output1"), query, None, None, finalizeFunction)
-        mongoStorage.withCollection("map-reduce-output1") {
+        contentCollection.mapReduce(map, reduce, MapReduceStandardOutput("map-reduce-output"), query, None, None, finalizeFunction)
+        mongoStorage.withCollection("map-reduce-output") {
           _.find().toList
         }
+    }
+  }
+
+  def mostRecentLastModified = {
+    withContent {
+
+      _.find()
+        .sort(MongoDBObject("time" -> -1))
+        .limit(1)
+        .toList
+        .headOption
+        .map( _.get("time").asInstanceOf[Long] )
+        .map( new DateTime(_) )
+        .getOrElse( new DateTime().minusDays(90) )
+
     }
   }
 
   private def dataPointToMongoObject: (DataPoint) => MongoDBObjectBuilder = {
     item =>
       val contentItemBuilder = MongoDBObject.newBuilder
-      contentItemBuilder += "metric" -> item.metric
-      contentItemBuilder += "timestamp" -> item.timestamp
-      contentItemBuilder += "value" -> item.value
+      contentItemBuilder += "env" -> item.environment
+      contentItemBuilder += "time" -> item.timestamp
+
+      item.metrics.foreach {
+        metric =>
+          contentItemBuilder += metric.name -> metric.value
+      }
+
       contentItemBuilder
   }
 

@@ -1,54 +1,53 @@
 <html>
 <head>
-    <title>Monthly performance stats</title>
+    <title>Noggin stats</title>
+
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://raw.github.com/flot/flot/master/jquery.flot.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://raw.github.com/flot/flot/master/jquery.flot.crosshair.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://raw.github.com/flot/flot/master/jquery.flot.resize.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" src="javascript/snoggin.js"></script>
 
     <style type="text/css">
-        body {
+        html, body {
             font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
             font-size: 18px;
+            height: 90%;
+        }
+        #chart {
+            width:95%;
+            height:95%;
+        }
+
+        #extras {
+            width: 95%;
+            margin: 50px;
+            border-top: 1px solid #ddd;
+        }
+        #date {
+            font-size:smaller;color:#545454;
+            padding-left: 30px;
         }
     </style>
-
-    <script type="text/javascript">
-        function numberWithCommas(x) {
-            return x.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
-        }
-
-        function doPlot(axisDefinition) {
-            $.plot($("#chart"),
-                    axisDefinition,
-                    {
-                        xaxes:[
-                            { mode:'time' }
-                        ],
-                        yaxes:[
-                            { min:0 }
-                        ],
-                        legend:{ position:'ne' }
-                    });
-        }
-    </script>
 
 </head>
 <body>
 
-<div class="container">
-
-    <div id="chart" style="width:90%;height:800px;">
-        Please wait...<br/>
-
+    <div id="chart">
+        Please wait a moment while this chart is rendered...<br/>
         <div style="display:none; text-align: center;" id="ajax-loader">
             <img src="/images/ajax-loader.gif" width="16" height="16"/>
         </div>
     </div>
 
-    <lift:stats />
+    <div id="extras">
+        <div id="date">&nbsp;</div>
+        <div id="legend"></div>
+    </div>
 
-</div>
+    <lift:stats />
 
 </body>
 </html>

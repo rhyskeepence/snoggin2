@@ -2,10 +2,12 @@ package rhyskeepence.queries
 
 import org.joda.time.Duration
 
-class AveragePerDay extends MongoAggregator with MongoQuery {
+class FiveMinuteAverage extends MongoAggregator with MongoQuery {
 
-  def mapFunc(metricName: String) =
-    "function() { emit(this.time - (this.time % 86400000), this." + metricName + ".floatApprox);}"
+  def mapFunc(metricName: String, duration: Duration) = {
+    val sizeOfEachBucket = duration.getMillis / 1500
+    "function() { emit(this.time - ( this.time % " + sizeOfEachBucket + " ), this." + metricName + ".floatApprox);}"
+  }
 
   val reduceFunc = """
     function (name, values) {
@@ -33,6 +35,6 @@ class AveragePerDay extends MongoAggregator with MongoQuery {
   """
 
   override def aggregate(environment: String, metricName: String, duration: Duration) = {
-    dataPointStore.mapReduce(query(environment, duration), mapFunc(metricName), reduceFunc, Some(finalizeFunc))
+    dataPointStore.mapReduce(query(environment, duration), mapFunc(metricName, duration), reduceFunc, Some(finalizeFunc))
   }
 }

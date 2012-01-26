@@ -1,15 +1,13 @@
 package rhyskeepence.queries
 
 import com.mongodb.casbah.commons.MongoDBObject
+import org.joda.time.Duration
 
 
 class CountPerDay extends MongoAggregator with MongoQuery {
 
-  val mapFunc = """
-    function() {
-      emit(this.timestamp - (this.timestamp % 86400000), this.value.floatApprox);
-    }
-    """
+  def mapFunc(metricName: String) =
+    "function() { emit(this.time - (this.time % 86400000), this." + metricName + ".floatApprox);}"
 
   val reduceFunc = """
     function (name, values) {
@@ -23,7 +21,7 @@ class CountPerDay extends MongoAggregator with MongoQuery {
     }
     """
 
-  def aggregate(metricName: String) = {
-    dataPointStore.mapReduce(query(metricName), mapFunc, reduceFunc, None)
+  override def aggregate(environment: String, metricName: String, duration: Duration) = {
+    dataPointStore.mapReduce(query(environment, duration), mapFunc(metricName), reduceFunc, None)
   }
 }

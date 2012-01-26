@@ -1,3 +1,5 @@
 package rhyskeepence.model
 
-case class DataPoint(timestamp: Long, metric: String, value: Long)
+case class DataPoint(timestamp: Long, environment: String, metrics: List[Metric])
+
+case class Metric(name: String, value: Long)

@@ -3,6 +3,7 @@ package bootstrap.liftweb
 import _root_.net.liftweb.common._
 import _root_.net.liftweb.http._
 import _root_.net.liftweb.http.provider._
+import rhyskeepence.legacyadaptor.Loader
 
 class Boot {
   def boot() {
@@ -14,6 +15,11 @@ class Boot {
 
     LiftRules.early.append(makeUtf8)
     LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
+
+    Loader.start()
+    LiftRules.unloadHooks.append {
+      Loader.shutdown _
+    }
 
   }
 

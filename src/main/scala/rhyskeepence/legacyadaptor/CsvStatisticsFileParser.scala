@@ -1,29 +1,33 @@
 package rhyskeepence.legacyadaptor
 
-import io.Source
-import rhyskeepence.model.DataPoint
+import rhyskeepence.model.{Metric, DataPoint}
 
-class CsvStatisticsFileParser(environment: String) {
+class CsvStatisticsFileParser {
 
-  def getDataPointsFrom(source: Source) = {
-    val csvData = source.getLines().map(_.split(",")).toList
+  def getDataPointsFrom(statsFile: StatisticFile) = {
+    val source = statsFile.source
+    val csvData = source.getLines().map(_.split(","))
 
-    val headerRow = csvData.head
-    val dataRows = csvData.drop(1)
+    val headerCsvRow = csvData.next()
+    val dataCsvRows = csvData.drop(1)
 
-    dataRows.flatMap {
-      dataRow =>
-        val rowTimestamp = extractTimestamp(dataRow)
-        val dataColumns = headerRow.zip(dataRow).drop(1)
+    val dataPoints = dataCsvRows.map {
+      row =>
+        val rowTimestamp = extractTimestamp(row)
+        val dataColumns = headerCsvRow.zip(row).drop(1)
 
-        dataColumns.map(
+        val metrics = dataColumns.map {
           headerAndData =>
-            DataPoint(rowTimestamp, headerName(headerAndData._1), headerAndData._2.toDouble.toLong)
-        )
+            Metric(
+              headerAndData._1,
+              headerAndData._2.toDouble.toLong)
+        }
+
+        DataPoint(rowTimestamp, statsFile.environment, metrics.toList)
     }
+
+    dataPoints.toList
   }
-  
-  private def headerName(columnName: String) = environment + "-" + columnName
 
   private def extractTimestamp(row: Array[String]): Long = row(0).toLong
 }

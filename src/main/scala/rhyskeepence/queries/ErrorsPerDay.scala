@@ -1,12 +1,12 @@
 package rhyskeepence.queries
 
+import org.joda.time.Duration
+
 class ErrorsPerDay extends MongoAggregator with MongoQuery {
 
-  val mapFunc = """
-    function() {
-      emit(this.timestamp - (this.timestamp % 86400000), this.value.floatApprox);
-    }
-    """
+  def mapFunc(metricName: String) =
+    "function() { emit(this.time - (this.time % 86400000), this." + metricName + ".floatApprox);}"
+
 
   val reduceFunc = """
     function (name, values) {
@@ -27,11 +27,11 @@ class ErrorsPerDay extends MongoAggregator with MongoQuery {
     }
   """
 
-  def aggregate(metricName: String) = {
-    dataPointStore.mapReduce(query(metricName), mapFunc, reduceFunc, Some(finalizeFunc))
+  override def aggregate(environment: String, metricName: String, duration: Duration) = {
+    dataPointStore.mapReduce(query(environment, duration), mapFunc(metricName), reduceFunc, Some(finalizeFunc))
   }
 
-  override def getLabel(fieldName: String) = {
-    fieldName.split("-").take(2).mkString(" ") + " - downtime (minutes)"
+  override def getLabel(environment: String, metricName: String) = {
+    environment + " - downtime (minutes)"
   }
 }

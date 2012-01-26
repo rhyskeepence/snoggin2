@@ -1,26 +1,15 @@
 package rhyskeepence.legacyadaptor
 
 import org.joda.time.Period
-import org.scala_tools.time.Imports._
-import rhyskeepence.storage.{MongoStorage, MongoDataPointStore}
+import rhyskeepence.model.DataPoint
 
 class FileToDataPointAdaptor(source: StatisticFileSource, fileParser: CsvStatisticsFileParser) {
 
-  def getDataPointsFor(period: Period) = {
+  def processDataPointsFor(period: Period)(process: List[DataPoint] => Unit) {
     val files = source.filesFor(period)
-    files.flatMap ( fileParser.getDataPointsFrom(_) )
+    files.foreach { file =>
+      println("Reading " + file)
+      process( fileParser.getDataPointsFrom(file) )
+    }
   }
-}
-
-object FileToDataPointAdaptor extends App {
-
-  val dataPointSource = new FileToDataPointAdaptor(
-    new StatisticFileSource("/Users/dev/tmp/production", "production-knitware-diamondquartz"),
-    new CsvStatisticsFileParser("production-knitware")
-  )
-  val mongoStore = new MongoDataPointStore(new MongoStorage)
-
-  val points = dataPointSource.getDataPointsFor(28.days)
-  mongoStore.write(points)
-
 }
