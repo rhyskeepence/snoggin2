@@ -1,8 +1,11 @@
 <html>
 <head>
     <title>noggin</title>
+    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
 </head>
-<body>
+<body style="padding: 20px;">
+<h2>Noggin charts</h2>
+
 <ul>
     <li><a href="chart.html?fields=production-activemq:jvmThreadCount&days=7">
         Active MQ - thread usage for past 7 days</a>
@@ -45,6 +48,22 @@
 
 </ul>
 
+
+<h2>Or, choose your own adventure</h2>
+<p>Start with this URL:</p> <pre>chart.html?</pre>
+<p>add some fields</p> <pre>fields=</pre>
+<p>Fields are in the format <pre>[system-name]:[metric]</pre>(separated by commas)</p>
+<p>[system-name] being something like <pre>production-activemq</pre> or <pre>production-knitware</pre></p>
+<p>[metric] being something like <pre>jvmThreadCount</pre></p>
+<p>Then choose the number of days to display, like this: <pre>&days=90</pre> If you leave this off, the default will show you a chart of the last 7 days</p>
+<p>You can optionally choose how to aggregate: <pre>&aggregate=sum</pre></p>
+<ol>
+    <li><b>sum</b> will add up all the values per day</li>
+    <li><b>average</b> will average all the values per day (recommended for things such as thread counts, memory, CPU, etc)</li>
+    <li><b>errors</b> will show the amount of downtime, in minutes, per day</li>
+    <li><b>dailythroughput</b> is special - it's used for activemq's ThroughputPerSecond metric, which will be totalled up to give throughput per day</li>
+    <li>If you don't include the aggregate parameter, you'll see high resolution chart of the metric</li>
+</ol>
 
 </body>
 </html>
