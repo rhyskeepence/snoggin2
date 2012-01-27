@@ -23,7 +23,7 @@ class Loader extends Actor {
 
   def receive = {
     case "poll" =>
-      val processFrom = mongoStore.mostRecentLastModified.toDateMidnight.plusDays(1)
+      val processFrom = mongoStore.lastModified.toDateMidnight.plusDays(1)
       println("Loader: reading content modified since " + processFrom)
       dataPointSource.processDataPointsFor(new Period(processFrom, clock.now)) {
         dataPoints =>

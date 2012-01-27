@@ -4,10 +4,37 @@ function formatNumber(x) {
     }
     return x.toFixed(0).toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
 }
+
+
+(function($) {
+    $.QueryString = (function(a) {
+        if (a == "") return {};
+        var b = {};
+        for (var i = 0; i < a.length; ++i)
+        {
+            var p=a[i].split('=');
+            if (p.length != 2) continue;
+            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+        }
+        return b;
+    })(window.location.search.substr(1).split('&'))
+})(jQuery);
+
 var plot;
 
 function doPlot(axisDefinition) {
     $(function () {
+
+        if ($.QueryString["aggregate"] == null) {
+            var series = {
+                lines: { show: true }
+            };
+        } else {
+            var series = {
+                bars: {show: true, barWidth: 1000*60*60*24, align: 'left'}
+            };
+        }
+
         plot = $.plot($("#chart"),
             axisDefinition,
             {
@@ -17,9 +44,7 @@ function doPlot(axisDefinition) {
                 yaxes:[
                     { min:0, tickFormatter: formatNumber }
                 ],
-                series: {
-                    lines: { show: true }
-                },
+                series: series,
                 grid: {
                     hoverable: true, autoHighlight: false
                 },
@@ -50,8 +75,12 @@ function doPlot(axisDefinition) {
                     if (series.data[j][0] > pos.x)
                         break;
 
-                var y = formatNumber(series.data[j - 1][1]);
-                legends.eq(i).text(series.label.replace(/=.*/, "= " + y));
+                var y = series.data[j - 1];
+                if (y != null) {
+                    legends.eq(i).text(series.label.replace(/=.*/, "= " + formatNumber(y[1])));
+                } else {
+                    legends.eq(i).text(series.label.replace(/=.*/, "= 0"));
+                }
 
                 var d = new Date();
                 d.setTime(pos.x);

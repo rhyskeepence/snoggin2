@@ -5,6 +5,7 @@ import org.specs.mock.Mockito
 import io.Source
 import org.joda.time.DateTime
 import rhyskeepence.model.{Metric, DataPoint}
+import collection.immutable.List
 
 class CsvStatisticsFileParserTest extends Specification with Mockito {
 
@@ -16,12 +17,14 @@ class CsvStatisticsFileParserTest extends Specification with Mockito {
   val rowTwoTime = new DateTime("2012-01-15T02:00:00").getMillis
 
   "parse csv file" in {
-    
-    source.getLines() returns Iterator(
+
+    val sourceFile = List(
       "time,metric1,metric2",
       rowOneTime + ",222,333",
       rowTwoTime + ",444,555"
-    )
+    ).toIterator
+
+    source.getLines() returns sourceFile
 
     statisticFile.source returns source
     statisticFile.environment returns "knitware"

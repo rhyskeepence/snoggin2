@@ -6,52 +6,64 @@ import com.mongodb.casbah.query.Imports._
 import com.mongodb.casbah.commons.{MongoDBObjectBuilder, MongoDBObject}
 import com.mongodb.casbah.map_reduce.MapReduceStandardOutput
 import org.joda.time.DateTime
-
+import collection.immutable.List
+import java.lang.String
 
 class MongoDataPointStore(mongoStorage: MongoStorage) {
 
   def write(items: List[DataPoint]) {
-    withContent {
-      dataPointCollection =>
+    val itemsGroupedByEnvironment = items groupBy (_.environment) mapValues (_.map(_.environment))
 
-        dataPointCollection.ensureIndex("env")
+    itemsGroupedByEnvironment.foreach {
+      case (environment, dataPoints) =>
 
-        items.foreach {
-          dataPointCollection += dataPointToMongoObject(_).result
+        withCollection(environment) {
+          dbCollection =>
+
+            items.foreach {
+              dbCollection += dataPointToMongoObject(_).result
+            }
         }
     }
+
+    updateLastModified(items)
   }
 
-  def mapReduce(query: Option[DBObject], map: JSFunction, reduce: JSFunction, finalizeFunction: Option[JSFunction]) = {
-    withContent {
-      contentCollection =>
-        contentCollection.mapReduce(map, reduce, MapReduceStandardOutput("map-reduce-output"), query, None, None, finalizeFunction)
-        mongoStorage.withCollection("map-reduce-output") {
+  def mapReduce(environment: String, query: Option[DBObject], map: JSFunction, reduce: JSFunction, finalizeFunction: Option[JSFunction]) = {
+    withCollection(environment) {
+      dbCollection =>
+        dbCollection.mapReduce(map, reduce, MapReduceStandardOutput("mapreduceoutput"), query, None, None, finalizeFunction)
+        withCollection("mapreduceoutput") {
           _.find().toList
         }
     }
   }
 
-  def mostRecentLastModified = {
-    withContent {
-
+  def lastModified = {
+    withCollection("updates") {
       _.find()
-        .sort(MongoDBObject("time" -> -1))
+        .sort(MongoDBObject("timestamp" -> -1))
         .limit(1)
         .toList
         .headOption
-        .map( _.get("time").asInstanceOf[Long] )
-        .map( new DateTime(_) )
-        .getOrElse( new DateTime().minusDays(90) )
+        .map(_.get("timestamp").asInstanceOf[Long])
+        .map(new DateTime(_))
+        .getOrElse(new DateTime().minusDays(90))
+    }
+  }
 
+  private def updateLastModified(items: List[DataPoint]) {
+    val maxTimestamp = items.foldLeft(0L)((i, m) => m.timestamp.max(i))
+    withCollection("updates") {
+      val lastModifiedUpdate = MongoDBObject.newBuilder += "timestamp" -> maxTimestamp
+      _ += lastModifiedUpdate.result
     }
   }
 
   private def dataPointToMongoObject: (DataPoint) => MongoDBObjectBuilder = {
     item =>
       val contentItemBuilder = MongoDBObject.newBuilder
-      contentItemBuilder += "env" -> item.environment
-      contentItemBuilder += "time" -> item.timestamp
+      contentItemBuilder += "_id" -> item.timestamp
 
       item.metrics.foreach {
         metric =>
@@ -61,8 +73,9 @@ class MongoDataPointStore(mongoStorage: MongoStorage) {
       contentItemBuilder
   }
 
-  private def withContent[T](doWithContent: MongoCollection => T) = {
-    mongoStorage.withCollection("datapoints")(doWithContent)
+  private def withCollection[T](environment: String)(doWithContent: MongoCollection => T) = {
+    val legalCollectionName = environment replaceAll ("\\-", "_")
+    mongoStorage.withCollection(legalCollectionName)(doWithContent)
   }
 
 }

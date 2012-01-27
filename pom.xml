@@ -51,6 +51,7 @@
             <groupId>com.mongodb.casbah</groupId>
             <artifactId>casbah_2.9.1</artifactId>
             <version>2.1.5-1</version>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>se.scalablesolutions.akka</groupId>
@@ -96,6 +97,12 @@
             <groupId>org.scala-tools.testing</groupId>
             <artifactId>specs_2.9.1</artifactId>
             <version>1.6.9</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.liftweb</groupId>
+            <artifactId>lift-testkit_2.9.1</artifactId>
+            <version>2.4-M4</version>
             <scope>test</scope>
         </dependency>
         <dependency>

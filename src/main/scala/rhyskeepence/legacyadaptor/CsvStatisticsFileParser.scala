@@ -9,9 +9,8 @@ class CsvStatisticsFileParser {
     val csvData = source.getLines().map(_.split(","))
 
     val headerCsvRow = csvData.next()
-    val dataCsvRows = csvData.drop(1)
 
-    val dataPoints = dataCsvRows.map {
+    val dataPoints = csvData.map {
       row =>
         val rowTimestamp = extractTimestamp(row)
         val dataColumns = headerCsvRow.zip(row).drop(1)
@@ -20,12 +19,11 @@ class CsvStatisticsFileParser {
           headerAndData =>
             Metric(
               headerAndData._1,
-              headerAndData._2.toDouble.toLong)
-        }
-
+              headerAndData._2.toDouble)
+        }        
         DataPoint(rowTimestamp, statsFile.environment, metrics.toList)
     }
-
+    
     dataPoints.toList
   }
 

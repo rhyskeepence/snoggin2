@@ -1,1 +1,50 @@
-it's snoggin!
+<html>
+<head>
+    <title>noggin</title>
+</head>
+<body>
+<ul>
+    <li><a href="chart.html?fields=production-activemq:jvmThreadCount&days=7">
+        Active MQ - thread usage for past 7 days</a>
+    </li>
+    <li><a href="chart.html?fields=production-activemq:jvmThreadCount&days=28&aggregate=average">
+        Active MQ - average thread usage per day for past 28 days</a>
+    </li>
+
+    <li><a href="chart.html?fields=production-activemq:ActiveMqhaloInternalEnqueueCountThroughputPerSecond,production-activemq:ActiveMqhaloInternalDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput">
+        HaloInternal Queue - daily enqueue/dequeue count</a>
+    </li>
+
+    <li><a href="chart.html?fields=production-activemq:ActiveMqhaloToKnitwareEnqueueCountThroughputPerSecond,production-activemq:ActiveMqhaloToKnitwareDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput">
+        HaloToKnitware Queue - daily enqueue/dequeue count</a>
+    </li>
+
+    <li><a href="chart.html?fields=production-activemq:ActiveMqhaloToLlustreamplusEnqueueCountThroughputPerSecond,production-activemq:ActiveMqhaloToLlustreamplusDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput">
+        HaloToLlustreamplus Queue - daily enqueue/dequeue count</a>
+    </li>
+
+    <li><a href="chart.html?fields=production-activemq:ActiveMqhaloToSideshowEnqueueCountThroughputPerSecond,production-activemq:ActiveMqhaloToSideshowDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput">
+        HaloToSideshow Queue - daily enqueue/dequeue count</a>
+    </li>
+
+    <li><a href="chart.html?fields=production-activemq:ActiveMqhectorToHaloEnqueueCountThroughputPerSecond,production-activemq:ActiveMqhectorToHaloDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput">
+        HectorToHalo Queue - daily enqueue/dequeue count</a>
+    </li>
+
+     <li><a href="chart.html?fields=production-activemq:ActiveMqllustreamplusToHaloEnqueueCountThroughputPerSecond,production-activemq:ActiveMqllustreamplusToHaloDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput">
+        LlustreamplusToHalo Queue - daily enqueue/dequeue count</a>
+    </li>
+
+    <li><a href="chart.html?fields=production-activemq:ActiveMqnedToHaloEnqueueCountThroughputPerSecond,production-activemq:ActiveMqnedToHaloDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput">
+        NedToHalo Queue - daily enqueue/dequeue count</a>
+    </li>
+
+    <li><a href="chart.html?fields=production-activemq:jvmThreadCount,production-aview:jvmThreadCount,production-bandaid:jvmThreadCount,production-bungie:jvmThreadCount,production-dnr:jvmThreadCount,production-grandma:jvmThreadCount,production-halo:jvmThreadCount,production-hector:jvmThreadCount,production-knitware:jvmThreadCount,production-lama:jvmThreadCount,production-llustreamplus:jvmThreadCount,production-ned:jvmThreadCount,production-nemo:jvmThreadCount,production-pacman:jvmThreadCount,production-penfold:jvmThreadCount,production-puma:jvmThreadCount,production-reportviewer:jvmThreadCount,production-scheduler:jvmThreadCount,production-sideshow:jvmThreadCount,production-spm:jvmThreadCount,production-swish:jvmThreadCount,production-troll:jvmThreadCount,production-twig:jvmThreadCount,production-uma:jvmThreadCount&days=7&aggregate=errors">
+        Downtime (in minutes)</a>
+    </li>
+
+</ul>
+
+
+</body>
+</html>

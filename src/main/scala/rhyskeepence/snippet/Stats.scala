@@ -7,8 +7,8 @@ import java.lang.String
 import com.mongodb.casbah.Imports._
 import com.mongodb.BasicDBObject
 import net.liftweb.common.Full
-import rhyskeepence.queries.{FiveMinuteAverage, ErrorsPerDay, AveragePerDay, CountPerDay}
 import org.joda.time.Duration
+import rhyskeepence.queries._
 
 class Stats {
 
@@ -16,10 +16,11 @@ class Stats {
     val fields = S.param("fields").map(_.split(",").toList).openOr(List[String]())
 
     val aggregator = S.param("aggregate") match {
-      case Full("count") => new CountPerDay
+      case Full("sum") => new SumPerDay
       case Full("average") => new AveragePerDay
+      case Full("dailythroughput") => new DailyThroughput
       case Full("errors") => new ErrorsPerDay
-      case _ => new FiveMinuteAverage
+      case _ => new HighResolutionAverage
     }
 
     val duration = S.param("days") match {

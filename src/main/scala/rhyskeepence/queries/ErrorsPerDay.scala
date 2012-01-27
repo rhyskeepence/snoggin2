@@ -4,31 +4,23 @@ import org.joda.time.Duration
 
 class ErrorsPerDay extends MongoAggregator with MongoQuery {
 
-  def mapFunc(metricName: String) =
-    "function() { emit(this.time - (this.time % 86400000), this." + metricName + ".floatApprox);}"
+  def mapByDayIf10SecondOutage(metricName: String) =
+    "function() { " +
+      "  var metric = this." + metricName + "; " +
+      // each -1 is a 10 second outage
+      "  if (metric == -1) emit(this._id - (this._id % 86400000), { aggregate: 10 } );" +
+      "  else emit(this._id - (this._id % 86400000), { aggregate: 0 } );" +
+      "}"
 
-
-  val reduceFunc = """
-    function (name, values) {
-      var count = 0;
-      values.forEach(function(f) {
-        if (f == -1) {
-          count = count + 5; // 5 seconds per -1 blip
-        }
-      });
-      return {count: count};
-    }
-    """
-
-  val finalizeFunc = """
+  val convertToMinutes = """
     function (who, res) {
-      res.aggregate = res.count / 60;  // report downtime in minutes
+      res.aggregate = res.aggregate / 60;
       return res;
     }
   """
 
   override def aggregate(environment: String, metricName: String, duration: Duration) = {
-    dataPointStore.mapReduce(query(environment, duration), mapFunc(metricName), reduceFunc, Some(finalizeFunc))
+    dataPointStore.mapReduce(environment, findNewerThan(duration), mapByDayIf10SecondOutage(metricName), sumReduction, Some(convertToMinutes))
   }
 
   override def getLabel(environment: String, metricName: String) = {

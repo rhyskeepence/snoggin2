@@ -12,11 +12,18 @@ class MongoStorage {
     val snoggin = mongo("snoggin")
 
     try {
-      val audits = snoggin(collectionName)
-      block(audits)
+      val collection = snoggin(collectionName)
+      block(collection)
 
     } finally {
       mongo.close()
     }
+  }
+
+  def collectionNames = {
+    val mongo = MongoConnection(host, port)
+
+    try mongo("snoggin").getCollectionNames()
+    finally mongo.close()
   }
 }
