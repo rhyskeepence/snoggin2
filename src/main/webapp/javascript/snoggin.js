@@ -49,7 +49,7 @@ function doPlot(axisDefinition) {
                     hoverable: true, autoHighlight: false
                 },
                 crosshair: { mode: "x" },
-                legend:{ container: "#legend" }
+                legend:{ noColumns: 3, container: "#legend" }
             });
 
         var legends = $("#legend .legendLabel");

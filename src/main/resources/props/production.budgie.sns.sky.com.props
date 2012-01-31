@@ -1,4 +1,4 @@
 loader.directory=/data/noggin/jmxMonitor/stats-collection/production
 
-# Run the loader at 1am, the only safe option for production
+# Run the loader at 1am
 only.load.at.oneam=true
