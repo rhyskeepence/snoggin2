@@ -1,0 +1,10 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="ehcache.xsd"
+
+         maxBytesLocalHeap="128M">
+
+    <defaultCache timeToLiveSeconds="86400" />
+
+    <cache name="snoggin"
+           timeToLiveSeconds="86400" />
+</ehcache>

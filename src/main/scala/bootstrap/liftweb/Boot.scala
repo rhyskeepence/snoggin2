@@ -4,6 +4,7 @@ import _root_.net.liftweb.common._
 import _root_.net.liftweb.http._
 import _root_.net.liftweb.http.provider._
 import rhyskeepence.legacyadaptor.Loader
+import net.liftweb.util.Helpers
 
 class Boot {
   def boot() {
@@ -15,6 +16,15 @@ class Boot {
 
     LiftRules.early.append(makeUtf8)
     LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
+
+    LiftRules.defaultHeaders = {
+      case _ =>
+        List(
+          "Pragma" -> "private",
+          "Cache-Control" -> "max-age=3600",
+          "Expires" -> Helpers.toInternetDate(Helpers.now.getTime + 3600000)
+        )
+    }
 
     Loader.start()
     LiftRules.unloadHooks.append {

@@ -8,11 +8,32 @@ import rhyskeepence.storage.{MongoDataPointStore, MongoStorage}
 import net.liftweb.util.Props
 import org.scala_tools.time.Imports._
 import rhyskeepence.Clock
+import net.liftweb.common.Logger
+import rhyskeepence.caching.Cacheable
 
-class Loader extends Actor {
-
+class Loader(mongoStore: MongoDataPointStore, dataPointSource: FileToDataPointAdaptor, clock: Clock) extends Actor with Logger with Cacheable {
   var latestContentProcessed: Option[DateTime] = None
-  private lazy val collectionDirectory = Props.get("loader.directory", ".")
+
+  def receive = {
+    case "load" =>
+      val processFrom = mongoStore.lastModified.toDateMidnight.plusDays(1)
+      info("Loader: reading content modified since " + processFrom)
+      dataPointSource.processDataPointsFor(new Period(processFrom, clock.now)) {
+        dataPoints =>
+          info("Loader: inserting " + dataPoints.size + " data points...")
+          mongoStore write dataPoints
+          info("Loader: done inserting")
+      }
+
+      invalidateCache()
+
+  }
+}
+
+object Loader extends Logger {
+
+  val initialLoadAtOneAm = Props.getBool("only.load.at.oneam", true)
+  val collectionDirectory = Props.get("loader.directory", ".")
 
   val clock = new Clock
   val mongoStore = new MongoDataPointStore(new MongoStorage)
@@ -21,46 +42,29 @@ class Loader extends Actor {
     new CsvStatisticsFileParser
   )
 
-  def receive = {
-    case "poll" =>
-      val processFrom = mongoStore.lastModified.toDateMidnight.plusDays(1)
-      println("Loader: reading content modified since " + processFrom)
-      dataPointSource.processDataPointsFor(new Period(processFrom, clock.now)) {
-        dataPoints =>
-          println("Loader: inserting " + dataPoints.size + " data points...")
-          mongoStore write dataPoints
-          println("Loader: done inserting")
-      }
-  }
-}
-
-object Loader {
-  val loader = actorOf[Loader].start()
-  val clock = new Clock
-
-  val oneDay = 1000 * 60 * 60 * 24
-  val initialLoadAtOneAm = Props.getBool("only.load.at.oneam", true)
-
-
   def start() = {
-    val durationTillStart =
-      if (initialLoadAtOneAm) {
+    val durationTillStart = calculateDurationToFirstLoad
+    info("Scheduling next load at " + (clock.now + durationTillStart))
 
-        val startTime = if (clock.midnight.plusHours(1) < clock.now)
-          clock.midnight.plusDays(1).plusHours(1)
-        else
-          clock.midnight.plusHours(1)
+    val contentLoadingActor = actorOf(new Loader(mongoStore, dataPointSource, clock)).start()
 
-        new Duration(clock.now, startTime)
-      } else {
-        new Duration(0)
-      }
+    Scheduler.schedule(
+      contentLoadingActor,
+      "load",
+      durationTillStart.getMillis,
+      Duration.standardDays(1).getMillis,
+      TimeUnit.MILLISECONDS)
 
-    println("Loader: scheduling next load at " + (clock.now + durationTillStart))
-    Scheduler.schedule(loader, "poll", durationTillStart.getMillis, oneDay, TimeUnit.MILLISECONDS)
   }
 
   def shutdown() {
     Scheduler.shutdown()
+  }
+
+  private def calculateDurationToFirstLoad: Duration = {
+    if (initialLoadAtOneAm)
+      new Duration(clock.now, clock.one_am)
+    else
+      new Duration(0)
   }
 }

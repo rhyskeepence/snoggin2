@@ -1,8 +1,9 @@
 package rhyskeepence.queries
 
 import org.joda.time.Duration
+import rhyskeepence.caching.Cacheable
 
-class SumPerDay extends MongoAggregator with MongoQuery {
+class SumPerDay extends MongoAggregator with MongoQuery with Cacheable {
 
   def mapByDayValuesGreaterThanZero(metricName: String) =
     "function() { " +
@@ -11,6 +12,9 @@ class SumPerDay extends MongoAggregator with MongoQuery {
       "}"
 
   override def aggregate(environment: String, metricName: String, duration: Duration) = {
-    dataPointStore.mapReduce(environment, findNewerThan(duration), mapByDayValuesGreaterThanZero(metricName), sumReduction, None)
+    val cacheKey = "sumperday-%s-%s-%s".format(environment, metricName, duration.getStandardSeconds)
+    getCachedOrUpdate(cacheKey) {
+      dataPointStore.mapReduce(environment, findNewerThan(duration), mapByDayValuesGreaterThanZero(metricName), sumReduction, None)
+    }
   }
 }
