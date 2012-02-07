@@ -2,15 +2,14 @@ package rhyskeepence.caching
 
 import net.sf.ehcache.{Ehcache, Element, CacheManager}
 
-
 trait Cacheable {
 
   val cache = new SnogginCache
 
-  def getCachedOrUpdate[T](key: String)(createValue: => T): T = {
+  def getCachedOrGenerate[T](key: String)(generator: => T): T = {
     val fromCache = cache.get(key)
     fromCache.getOrElse {
-      val newValue = createValue
+      val newValue = generator
       cache.put(key, newValue)
       newValue  
     }
@@ -22,7 +21,6 @@ trait Cacheable {
 }
 
 class SnogginCache {
-  private val cacheManager = CacheManager.create(getClass.getResource("/ehcache.xml"))
 
   def put[T](key: String, value: T) {
     getSnogginCache.put(new Element(key, value))
@@ -41,6 +39,6 @@ class SnogginCache {
   }
 
   private def getSnogginCache[T]: Ehcache = {
-    cacheManager.getEhcache("snoggin")
+    CacheManager.create.getEhcache("snoggin")
   }
 }

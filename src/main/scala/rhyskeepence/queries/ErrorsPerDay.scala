@@ -23,7 +23,7 @@ class ErrorsPerDay extends MongoAggregator with MongoQuery with Cacheable {
   override def aggregate(environment: String, metricName: String, duration: Duration) = {
     val cacheKey = "errors-%s-%s-%s".format(environment, metricName, duration.getStandardSeconds)
 
-    getCachedOrUpdate(cacheKey) {
+    getCachedOrGenerate(cacheKey) {
       dataPointStore.mapReduce(environment, findNewerThan(duration), mapByDayIf10SecondOutage(metricName), sumReduction, Some(convertToMinutes))
     }
   }

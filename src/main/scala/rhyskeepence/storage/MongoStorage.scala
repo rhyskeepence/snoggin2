@@ -7,13 +7,13 @@ class MongoStorage {
   private lazy val host = Props.get("mongo.host", "localhost")
   private lazy val port = Props.getInt("mongo.port", 27017)
 
-  def withCollection[T](collectionName: String)(block: MongoCollection => T) = {
+  def withCollection[T](collectionName: String)(actionOnCollection: MongoCollection => T) = {
     val mongo = MongoConnection(host, port)
     val snoggin = mongo("snoggin")
 
     try {
       val collection = snoggin(collectionName)
-      block(collection)
+      actionOnCollection(collection)
 
     } finally {
       mongo.close()

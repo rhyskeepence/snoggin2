@@ -13,18 +13,20 @@ class CsvStatisticsFileParser {
     val dataPoints = csvData.map {
       row =>
         val rowTimestamp = extractTimestamp(row)
-        val dataColumns = headerCsvRow.zip(row).drop(1)
-
-        val metrics = dataColumns.map {
-          headerAndData =>
-            Metric(
-              headerAndData._1,
-              headerAndData._2.toDouble)
-        }        
+        val metrics = mapRowToMetrics(headerCsvRow, row)
         DataPoint(rowTimestamp, statsFile.environment, metrics.toList)
     }
-    
+
     dataPoints.toList
+  }
+
+  private def mapRowToMetrics(headerRow: Array[String], row: Array[String]) = {
+    val dataColumns = headerRow.zip(row).drop(1)
+
+    dataColumns.map {
+      case (name, value) =>
+        Metric(name, value.toDouble)
+    }
   }
 
   private def extractTimestamp(row: Array[String]): Long = row(0).toLong

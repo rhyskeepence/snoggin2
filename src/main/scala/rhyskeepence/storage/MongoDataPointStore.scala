@@ -4,10 +4,10 @@ import rhyskeepence.model.DataPoint
 import com.mongodb.casbah.MongoCollection
 import com.mongodb.casbah.query.Imports._
 import com.mongodb.casbah.commons.{MongoDBObjectBuilder, MongoDBObject}
-import com.mongodb.casbah.map_reduce.MapReduceStandardOutput
 import org.joda.time.DateTime
 import collection.immutable.List
 import java.lang.String
+import com.mongodb.casbah.map_reduce.MapReduceInlineOutput
 
 class MongoDataPointStore(mongoStorage: MongoStorage) {
 
@@ -31,11 +31,7 @@ class MongoDataPointStore(mongoStorage: MongoStorage) {
 
   def mapReduce(environment: String, query: Option[DBObject], map: JSFunction, reduce: JSFunction, finalizeFunction: Option[JSFunction]) = {
     withCollection(environment) {
-      dbCollection =>
-        dbCollection.mapReduce(map, reduce, MapReduceStandardOutput("mapreduceoutput"), query, None, None, finalizeFunction)
-        withCollection("mapreduceoutput") {
-          _.find().toList
-        }
+        _.mapReduce(map, reduce, MapReduceInlineOutput, query, None, None, finalizeFunction).toList
     }
   }
 

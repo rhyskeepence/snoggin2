@@ -13,7 +13,7 @@ class SumPerDay extends MongoAggregator with MongoQuery with Cacheable {
 
   override def aggregate(environment: String, metricName: String, duration: Duration) = {
     val cacheKey = "sumperday-%s-%s-%s".format(environment, metricName, duration.getStandardSeconds)
-    getCachedOrUpdate(cacheKey) {
+    getCachedOrGenerate(cacheKey) {
       dataPointStore.mapReduce(environment, findNewerThan(duration), mapByDayValuesGreaterThanZero(metricName), sumReduction, None)
     }
   }

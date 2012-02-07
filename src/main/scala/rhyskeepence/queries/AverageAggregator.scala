@@ -31,7 +31,7 @@ trait AverageAggregator extends MongoAggregator with MongoQuery with Cacheable {
   def aggregate(millisecondsPerBucket: Long, environment: String, metricName: String, duration: Duration) = {
     val cacheKey = "average-%s-%s-%s-%s".format(millisecondsPerBucket, environment, metricName, duration.getStandardSeconds)
 
-    getCachedOrUpdate(cacheKey) {
+    getCachedOrGenerate(cacheKey) {
       dataPointStore.mapReduce(
         environment,
         findNewerThan(duration),
@@ -39,7 +39,5 @@ trait AverageAggregator extends MongoAggregator with MongoQuery with Cacheable {
         reduceFunc,
         Some(averageFunc))
     }
-
-
   }
 }

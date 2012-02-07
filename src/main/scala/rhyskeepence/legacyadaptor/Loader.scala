@@ -1,6 +1,5 @@
 package rhyskeepence.legacyadaptor
 
-import org.joda.time.DateTime
 import akka.actor._
 import akka.actor.Actor._
 import java.util.concurrent.TimeUnit
@@ -12,13 +11,13 @@ import net.liftweb.common.Logger
 import rhyskeepence.caching.Cacheable
 
 class Loader(mongoStore: MongoDataPointStore, dataPointSource: FileToDataPointAdaptor, clock: Clock) extends Actor with Logger with Cacheable {
-  var latestContentProcessed: Option[DateTime] = None
 
   def receive = {
     case "load" =>
-      val processFrom = mongoStore.lastModified.toDateMidnight.plusDays(1)
-      info("Loader: reading content modified since " + processFrom)
-      dataPointSource.processDataPointsFor(new Period(processFrom, clock.now)) {
+      val fromDate = mongoStore.lastModified.toDateMidnight.plusDays(1)
+      info("Loader: reading content modified since " + fromDate)
+
+      dataPointSource.processDataPointsFor(new Period(fromDate, clock.now)) {
         dataPoints =>
           info("Loader: inserting " + dataPoints.size + " data points...")
           mongoStore write dataPoints
@@ -26,7 +25,6 @@ class Loader(mongoStore: MongoDataPointStore, dataPointSource: FileToDataPointAd
       }
 
       invalidateCache()
-
   }
 }
 
