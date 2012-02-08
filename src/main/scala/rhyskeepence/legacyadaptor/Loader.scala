@@ -14,10 +14,10 @@ class Loader(mongoStore: MongoDataPointStore, dataPointSource: FileToDataPointAd
 
   def receive = {
     case "load" =>
-      val fromDate = mongoStore.lastModified.toDateMidnight.plusDays(1)
+      val fromDate = mongoStore.lastModified.toDateMidnight.plusDays(1).toDateTime
       info("Loader: reading content modified since " + fromDate)
 
-      dataPointSource.processDataPointsFor(new Period(fromDate, clock.now)) {
+      dataPointSource.processDataPointsSince(fromDate) {
         dataPoints =>
           info("Loader: inserting " + dataPoints.size + " data points...")
           mongoStore write dataPoints

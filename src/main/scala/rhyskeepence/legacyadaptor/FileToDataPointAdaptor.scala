@@ -1,13 +1,13 @@
 package rhyskeepence.legacyadaptor
 
-import org.joda.time.Period
 import rhyskeepence.model.DataPoint
 import net.liftweb.common.Logger
+import org.joda.time.DateTime
 
 class FileToDataPointAdaptor(source: StatisticFileSource, fileParser: CsvStatisticsFileParser) extends Logger {
 
-  def processDataPointsFor[T](period: Period)(process: List[DataPoint] => T) {
-    source.filesFor(period).foreach { file =>
+  def processDataPointsSince[T](startingDate: DateTime)(process: List[DataPoint] => T) {
+    source.filesSince(startingDate).foreach { file =>
       info("Reading " + file)
       process( fileParser.getDataPointsFrom(file) )
     }

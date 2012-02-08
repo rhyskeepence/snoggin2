@@ -3,7 +3,6 @@ package rhyskeepence.snippet
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.http.js.JE._
 import net.liftweb.http.S
-import java.lang.String
 import com.mongodb.casbah.Imports._
 import com.mongodb.BasicDBObject
 import net.liftweb.common.Full
@@ -13,7 +12,10 @@ import rhyskeepence.queries._
 class Stats {
 
   def render = {
-    val fields = S.param("fields").map(_.split(",").toList).openOr(List[String]())
+    val fields =
+      S.param("fields")
+        .map(_.split(",").toList)
+        .openOr(List[String]())
 
     val aggregator = S.param("aggregate") match {
       case Full("sum") => new SumPerDay
@@ -32,27 +34,28 @@ class Stats {
       field =>
         val Array(environment, metricName) = field.split(":")
 
-        val allPoints = aggregator.aggregate(environment, metricName, duration)
+        val mongoObjects = aggregator.aggregate(environment, metricName, duration)
 
-        val dataPoints = allPoints.map {
-          dbObject =>
-            val timestamp = dbObject.getAsOrElse[Double]("_id", 0)
-            val value = dbObject.get("value") match {
-              case b: BasicDBObject => b.getAsOrElse[Double]("aggregate", 0)
-              case _ => 0
-            }
-
-            JsArray(timestamp, value)
+        val dataPoints = mongoObjects.map {
+          dbObject => toJsArray(dbObject)
         }
 
         JsObj(
-          ("data", JsArray(dataPoints.toList)),
+          ("data", JsArray(dataPoints)),
           ("label", Str(aggregator.getLabel(environment, metricName) + " = 0")))
-
     }
 
-    Script(
-      Call("doPlot", JsArray(allStats))
-    )
+    Script(Call("doPlot", JsArray(allStats)))
   }
+
+  private def toJsArray(dbObject: DBObject) = {
+    val timestamp = dbObject.getAsOrElse[Double]("_id", 0)
+    val value = dbObject.get("value") match {
+      case b: BasicDBObject => b.getAsOrElse[Double]("aggregate", 0)
+      case _ => 0
+    }
+
+    JsArray(timestamp, value)
+  }
+
 }

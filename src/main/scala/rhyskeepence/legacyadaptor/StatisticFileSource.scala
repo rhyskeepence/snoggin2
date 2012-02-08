@@ -9,21 +9,23 @@ class StatisticFileSource(collectionDirectory: String, clock: Clock) {
 
   val yymmddPattern = DateTimeFormat.forPattern("yyyyMMdd")
 
-  def filesFor(duration: Period): List[StatisticFile] = {
-    generateFileNames(clock.now - duration).toList
+  def filesSince(startingDate: DateTime): List[StatisticFile] = {
+    generateFileNames(startingDate).toList
   }
 
   private def generateFileNames(dateToCheck: DateTime, files: ListBuffer[StatisticFile] = ListBuffer()): ListBuffer[StatisticFile] = {
+    if (isToday(dateToCheck))
+      return files
+
     val statisticFilePath = statisticFilePathFor(dateToCheck)
     if (statisticFilePath.exists()) {
       files ++= collectCsvFilesIn(statisticFilePath)
     }
 
-    if (dateToCheck + 1.day >= clock.midnight)
-      files
-    else
-      generateFileNames(dateToCheck + 1.day, files)
+    generateFileNames(dateToCheck + 1.day, files)
   }
+
+  private def isToday(dateToCheck: DateTime) = dateToCheck >= clock.midnight
 
   private def statisticFilePathFor(dateToCheck: DateTime) = {
     val yyyymmdd = yymmddPattern.print(dateToCheck)

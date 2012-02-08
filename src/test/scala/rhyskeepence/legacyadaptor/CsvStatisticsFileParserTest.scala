@@ -1,13 +1,13 @@
 package rhyskeepence.legacyadaptor
 
-import org.specs.Specification
 import org.specs.mock.Mockito
 import io.Source
 import org.joda.time.DateTime
 import rhyskeepence.model.{Metric, DataPoint}
 import collection.immutable.List
+import org.specs.{SpecificationWithJUnit, Specification}
 
-class CsvStatisticsFileParserTest extends Specification with Mockito {
+class CsvStatisticsFileParserTest extends SpecificationWithJUnit with Mockito {
 
   val parser = new CsvStatisticsFileParser
   val source = mock[Source]
