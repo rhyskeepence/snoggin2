@@ -1,9 +1,8 @@
-package rhyskeepence.queries
+package rhyskeepence.queries.mongo
 
 import org.joda.time.Duration
-import rhyskeepence.caching.Cacheable
 
-trait AverageAggregator extends MongoAggregator with MongoQuery with Cacheable {
+trait AverageAggregator extends MongoAggregator with MongoQuery {
 
   private def map(metricName: String, millisecondsPerBucket: Long) =
     "function() { emit(this._id - (this._id % " + millisecondsPerBucket + "), { aggregate:0, count:1, sum: this." + metricName + " } );}"
@@ -29,15 +28,11 @@ trait AverageAggregator extends MongoAggregator with MongoQuery with Cacheable {
     """
 
   def aggregate(millisecondsPerBucket: Long, environment: String, metricName: String, duration: Duration) = {
-    val cacheKey = "average-%s-%s-%s-%s".format(millisecondsPerBucket, environment, metricName, duration.getStandardSeconds)
-
-    getCachedOrGenerate(cacheKey) {
       dataPointStore.mapReduce(
         environment,
         findNewerThan(duration),
         map(metricName, millisecondsPerBucket),
         reduceFunc,
         Some(averageFunc))
-    }
   }
 }

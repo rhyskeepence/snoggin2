@@ -1,9 +1,8 @@
-package rhyskeepence.queries
+package rhyskeepence.queries.mongo
 
 import org.joda.time.Duration
-import rhyskeepence.caching.Cacheable
 
-class ErrorsPerDay extends MongoAggregator with MongoQuery with Cacheable {
+class ErrorsPerDay extends MongoAggregator with MongoQuery {
 
   def mapByDayIf10SecondOutage(metricName: String) =
     "function() { " +
@@ -21,11 +20,7 @@ class ErrorsPerDay extends MongoAggregator with MongoQuery with Cacheable {
   """
 
   override def aggregate(environment: String, metricName: String, duration: Duration) = {
-    val cacheKey = "errors-%s-%s-%s".format(environment, metricName, duration.getStandardSeconds)
-
-    getCachedOrGenerate(cacheKey) {
-      dataPointStore.mapReduce(environment, findNewerThan(duration), mapByDayIf10SecondOutage(metricName), sumReduction, Some(convertToMinutes))
-    }
+    dataPointStore.mapReduce(environment, findNewerThan(duration), mapByDayIf10SecondOutage(metricName), sumReduction, Some(convertToMinutes))
   }
 
   override def getLabel(environment: String, metricName: String) = {

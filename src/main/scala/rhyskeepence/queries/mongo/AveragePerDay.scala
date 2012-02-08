@@ -1,7 +1,6 @@
-package rhyskeepence.queries
+package rhyskeepence.queries.mongo
 
 import org.joda.time.Duration
-import rhyskeepence.caching.Cacheable
 
 class AveragePerDay extends AverageAggregator {
 

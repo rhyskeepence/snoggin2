@@ -7,9 +7,11 @@ import com.mongodb.casbah.Imports._
 import com.mongodb.BasicDBObject
 import net.liftweb.common.Full
 import org.joda.time.Duration
-import rhyskeepence.queries._
+import bootstrap.liftweb.SnogginInjector
 
 class Stats {
+  val aggregatorFactory = SnogginInjector.aggregatorFactory.vend
+
 
   def render = {
     val fields =
@@ -18,11 +20,11 @@ class Stats {
         .openOr(List[String]())
 
     val aggregator = S.param("aggregate") match {
-      case Full("sum") => new SumPerDay
-      case Full("average") => new AveragePerDay
-      case Full("dailythroughput") => new DailyThroughput
-      case Full("errors") => new ErrorsPerDay
-      case _ => new HighResolutionAverage
+      case Full("sum") => aggregatorFactory.sumPerDay
+      case Full("average") => aggregatorFactory.averagePerDay
+      case Full("dailythroughput") => aggregatorFactory.dailyThroughput
+      case Full("errors") => aggregatorFactory.errorsPerDay
+      case _ => aggregatorFactory.noAggregation
     }
 
     val duration = S.param("days") match {
@@ -32,12 +34,10 @@ class Stats {
 
     val allStats = fields.map {
       field =>
-        val Array(environment, metricName) = field.split(":")
-
+        val (environment, metricName) = splitEnvironmentAndMetric(field)
         val mongoObjects = aggregator.aggregate(environment, metricName, duration)
-
         val dataPoints = mongoObjects.map {
-          dbObject => toJsArray(dbObject)
+          dbObject => dbObjectToJavascript(dbObject)
         }
 
         JsObj(
@@ -48,7 +48,7 @@ class Stats {
     Script(Call("doPlot", JsArray(allStats)))
   }
 
-  private def toJsArray(dbObject: DBObject) = {
+  private def dbObjectToJavascript(dbObject: DBObject) = {
     val timestamp = dbObject.getAsOrElse[Double]("_id", 0)
     val value = dbObject.get("value") match {
       case b: BasicDBObject => b.getAsOrElse[Double]("aggregate", 0)
@@ -56,6 +56,13 @@ class Stats {
     }
 
     JsArray(timestamp, value)
+  }
+  
+  private def splitEnvironmentAndMetric(field: String) = {
+    field.split(":") match {
+      case Array(environment, metric) => (environment, metric)
+      case _ => sys.error("malformed field: %s".format(field))
+    }
   }
 
 }

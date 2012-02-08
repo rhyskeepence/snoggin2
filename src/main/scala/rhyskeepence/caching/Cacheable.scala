@@ -1,44 +1,19 @@
 package rhyskeepence.caching
 
-import net.sf.ehcache.{Ehcache, Element, CacheManager}
+import rhyskeepence.queries.Aggregator
+import org.joda.time.Duration
+import bootstrap.liftweb.SnogginInjector
 
-trait Cacheable {
+trait Cacheable extends Aggregator {
+  val cache = SnogginInjector.cache.vend
 
-  val cache = new SnogginCache
-
-  def getCachedOrGenerate[T](key: String)(generator: => T): T = {
-    val fromCache = cache.get(key)
+  abstract override def aggregate(environment: String, metricName: String, duration: Duration) = {
+    val cacheKey = "aggregation-%s-%s-%s".format(environment, metricName, duration.getStandardSeconds)
+    val fromCache = cache.get(cacheKey)
     fromCache.getOrElse {
-      val newValue = generator
-      cache.put(key, newValue)
-      newValue  
+      val newValue = super.aggregate(environment, metricName, duration)
+      cache.put(cacheKey, newValue)
+      newValue
     }
-  }
-
-  def invalidateCache() {
-    cache.invalidate()
-  }
-}
-
-class SnogginCache {
-
-  def put[T](key: String, value: T) {
-    getSnogginCache.put(new Element(key, value))
-  }
-
-  def get[T](key: String): Option[T] = {
-    val element = getSnogginCache.get(key)
-    if (element != null)
-      Some(element.getValue.asInstanceOf[T])
-    else
-      None
-  }
-  
-  def invalidate() {
-    getSnogginCache.removeAll()
-  }
-
-  private def getSnogginCache[T]: Ehcache = {
-    CacheManager.create.getEhcache("snoggin")
   }
 }

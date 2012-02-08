@@ -1,14 +1,13 @@
-package rhyskeepence.queries
+package rhyskeepence.queries.mongo
 
-import com.mongodb.DBObject
 import com.mongodb.casbah.commons.MongoDBObject
 import org.joda.time.Duration
-import rhyskeepence.Clock
 import org.scala_tools.time.Imports._
+import rhyskeepence.queries.Aggregator
+import bootstrap.liftweb.SnogginInjector
 
-
-trait MongoAggregator {
-  val clock = new Clock
+trait MongoAggregator extends Aggregator {
+  val clock = SnogginInjector.clock.vend
 
   val sumReduction = """
     function (name, values) {
@@ -23,10 +22,6 @@ trait MongoAggregator {
       return result;
     }
     """
-
-  def aggregate(environment: String, metricName: String, duration: Duration): List[DBObject]
-
-  def getLabel(environment: String, metricName: String) = metricName + " (" + environment + ")"
 
   def findNewerThan(duration: Duration) = {
     val timeLimit = (clock.now - duration).toDateMidnight.getMillis

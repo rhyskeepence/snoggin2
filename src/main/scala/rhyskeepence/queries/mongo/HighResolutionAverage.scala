@@ -1,4 +1,4 @@
-package rhyskeepence.queries
+package rhyskeepence.queries.mongo
 
 import org.joda.time.Duration
 
