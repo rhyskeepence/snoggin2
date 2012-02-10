@@ -12,7 +12,6 @@ import bootstrap.liftweb.SnogginInjector
 class PlotChart {
   val aggregatorFactory = SnogginInjector.aggregatorFactory.vend
 
-
   def render = {
     val fields =
       S.param("fields")

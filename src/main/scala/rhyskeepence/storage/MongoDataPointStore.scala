@@ -3,11 +3,11 @@ package rhyskeepence.storage
 import rhyskeepence.model.DataPoint
 import com.mongodb.casbah.MongoCollection
 import com.mongodb.casbah.query.Imports._
+import scala.collection.JavaConverters._
 import com.mongodb.casbah.commons.{MongoDBObjectBuilder, MongoDBObject}
 import org.joda.time.DateTime
-import collection.immutable.List
-import java.lang.String
 import com.mongodb.casbah.map_reduce.MapReduceInlineOutput
+import scala.collection.immutable.{Set, List}
 
 class MongoDataPointStore(mongoStorage: MongoStorage) {
 
@@ -31,7 +31,7 @@ class MongoDataPointStore(mongoStorage: MongoStorage) {
 
   def mapReduce(environment: String, query: Option[DBObject], map: JSFunction, reduce: JSFunction, finalizeFunction: Option[JSFunction]) = {
     withCollection(environment) {
-        _.mapReduce(map, reduce, MapReduceInlineOutput, query, None, None, finalizeFunction).toList
+      _.mapReduce(map, reduce, MapReduceInlineOutput, query, None, None, finalizeFunction).toList
     }
   }
 
@@ -45,6 +45,27 @@ class MongoDataPointStore(mongoStorage: MongoStorage) {
         .map(_.get("timestamp").asInstanceOf[Long])
         .map(new DateTime(_))
         .getOrElse(new DateTime().minusDays(90))
+    }
+  }
+
+  def environmentNames = {
+    mongoStorage.collectionNames
+      .toList
+      .filter(! _.startsWith("system"))
+      .filter(_ != "updates")
+      .map(_.replaceAll("_", "-"))
+  }
+
+  def metricNamesFor(environment: String) = {
+    withCollection(environment) {
+      _.find()
+        .sort(MongoDBObject("_id" -> -1))
+        .limit(1)
+        .toList
+        .headOption
+        .map(mongoObj => mongoObj.keySet().asScala.toList)
+        .getOrElse(List[String]())
+        .filter(_ != "_id")
     }
   }
 
@@ -70,7 +91,7 @@ class MongoDataPointStore(mongoStorage: MongoStorage) {
   }
 
   private def withCollection[T](environment: String)(doWithContent: MongoCollection => T) = {
-    val legalCollectionName = environment replaceAll ("\\-", "_")
+    val legalCollectionName = environment replaceAll("\\-", "_")
     mongoStorage.withCollection(legalCollectionName)(doWithContent)
   }
 

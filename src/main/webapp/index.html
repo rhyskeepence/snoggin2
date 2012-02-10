@@ -1,10 +1,6 @@
-<html>
-<head>
-    <title>Noggin</title>
-    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
-</head>
-<body style="padding: 20px;">
-<h2>Noggin charts</h2>
+<lift:surround with="default" at="content">
+
+<h1>Noggin charts</h1>
 
 <h3>Queues</h3>
 <ul>
@@ -71,22 +67,69 @@
     </li>
 </ul>
 
+<hr/>
+<h1>Or, choose your own adventure</h1>
+    <br/>
+    Chart duration: <input type="text" id="days" onkeyup="days = this.value; render();" /> days <br/><br/>
 
-<h2>Or, choose your own adventure</h2>
-<p>Start with this URL:</p> <pre>chart.html?</pre>
-<p>add some fields</p> <pre>fields=</pre>
-<p>Fields are in the format <pre>[system-name]:[metric]</pre>(separated by commas)</p>
-<p>[system-name] being something like <pre>activemq-berylcoral</pre> or <pre>knitware-diamondquartz</pre></p>
-<p>[metric] being something like <pre>jvmThreadCount</pre> <a href="headers.html"><strong>Click here for a full list of metrics</strong></a> </p>
-<p>Then choose the number of days to display, like this: <pre>&days=90</pre> If you leave this off, the default will show you a chart of the last 7 days</p>
-<p>You can optionally choose how to aggregate: <pre>&aggregate=sum</pre></p>
-<ol>
-    <li><b>sum</b> will add up all the values per day</li>
-    <li><b>average</b> will average all the values per day (recommended for things such as thread counts, memory, CPU, etc)</li>
-    <li><b>errors</b> will show the amount of downtime, in minutes, per day</li>
-    <li><b>dailythroughput</b> is special - it's used for activemq's ThroughputPerSecond metric, which will be totalled up to give throughput per day</li>
-    <li>If you don't include the aggregate parameter, you'll see a high resolution chart of the metric</li>
-</ol>
+    Aggregator:
+    <select onchange="aggregator = this.value; render();">
+        <option value="None">No aggregation, show detail</option>
+        <option value="sum">Sum of all values, per day</option>
+        <option value="average">Average of all values, per day</option>
+        <option value="errors">Amount of downtime, in minutes, per day</option>
+        <option value="dailythroughput">Daily Throughput (only used for ActiveMQ's ThroughputPerSecond)</option>
+    </select>
 
-</body>
-</html>
+    <br/>
+    <br/>
+
+    <lift:Metrics>
+        <form>
+            Application / metric:
+            <select id="applications"></select>
+
+            <span style="display:none" id="ajax-loader">
+                <img src="/images/ajax-loader.gif" style="vertical-align: middle;" width="20" height="20"/>
+            </span>
+
+            <select id="metrics"></select>
+            <a href="#" id="add_button" class="btn">Add</a>
+        </form>
+    </lift:Metrics>
+
+    <div style="margin-top: 50px;">
+        <pre id="generated_url"></pre>
+        <a id="clickable" class="btn" href="#" onclick="$('#load-clicked').show()">Click to view</a>
+
+        <span style="display:none" id="load-clicked">
+            <img src="/images/ajax-loader.gif" style="vertical-align: middle;" width="20" height="20"/>
+        </span>
+
+    </div>
+
+    <script>
+        var aggregator = "None";
+        var days = 7;
+        var metrics = new Array();
+
+        function append_metric(name) {
+            metrics.push(name);
+            render();
+        }
+
+        function render() {
+            var url = "chart.html?fields=" + metrics.join(",") + "&days=" + days;
+            if (aggregator != "None") {
+                url += "&aggregator=" + aggregator;
+            }
+
+            $("#days").val(days);
+            $("#generated_url").html(url);
+            $("#clickable").attr("href", url);
+        }
+
+        $(render);
+    </script>
+
+</lift:surround>
