@@ -6,12 +6,18 @@
 <body style="padding: 20px;">
 <h2>Noggin charts</h2>
 
+<h3>Queues</h3>
 <ul>
     <li><a href="chart.html?fields=activemq-berylcoral:jvmThreadCount&days=7">
-        Active MQ - thread usage for past 7 days</a>
+        Active MQ - thread usage over the past 7 days</a>
     </li>
+
     <li><a href="chart.html?fields=activemq-berylcoral:jvmThreadCount&days=28&aggregate=average">
-        Active MQ - average thread usage per day for past 28 days</a>
+        Active MQ - average thread usage per day over the past 28 days</a>
+    </li>
+
+    <li><a href="chart.html?fields=activemq-berylcoral:jvmTotalMemory,activemq-berylcoral:jvmUsedMemory,activemq-berylcoral:jvmFreeMemory&days=7">
+        Active MQ - memory usage over the past 7 days</a>
     </li>
 
     <li><a href="chart.html?fields=activemq-berylcoral:ActiveMqhaloInternalEnqueueCountThroughputPerSecond,activemq-berylcoral:ActiveMqhaloInternalDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput">
@@ -41,11 +47,28 @@
     <li><a href="chart.html?fields=activemq-berylcoral:ActiveMqnedToHaloEnqueueCountThroughputPerSecond,activemq-berylcoral:ActiveMqnedToHaloDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput">
         NedToHalo Queue - daily enqueue/dequeue count</a>
     </li>
+</ul>
 
-    <li><a href="chart.html?fields=activemq-berylcoral:jvmThreadCount,aview-prod:jvmThreadCount,bandaid-diamondquartz:jvmThreadCount,bungie-lapiz:jvmThreadCount,bungie-topaz:jvmThreadCount,dnr-diamondquartz:jvmThreadCount,grandma-lapiz:jvmThreadCount,grandma-topaz:jvmThreadCount,halo-diamondquartz:jvmThreadCount,hector-diamondquartz:jvmThreadCount,knitware-diamondquartz:jvmThreadCount,lama-lapiz:jvmThreadCount,lama-topaz:jvmThreadCount,llustreamplus-diamondquartz:jvmThreadCount,ned-diamondquartz:jvmThreadCount,nemo-lapiz:jvmThreadCount,nemo-topaz:jvmThreadCount,pacman-amberamethyst:jvmThreadCount,pacman-diamondquartz:jvmThreadCount,penfold-diamondquartz:jvmThreadCount,puma-lapiz:jvmThreadCount,puma-topaz:jvmThreadCount,reportviewer-lapiz:jvmThreadCount,reportviewer-topaz:jvmThreadCount,scheduler-diamondquartz:jvmThreadCount,sideshow-diamondquartz:jvmThreadCount,spm-diamondquartz:jvmThreadCount,swish-lapiz:jvmThreadCount,swish-topaz:jvmThreadCount,troll-citrinesapphire:jvmThreadCount,twig-diamondquartz:jvmThreadCount,uma-lapiz:jvmThreadCount,uma-topaz:jvmThreadCount&days=7&aggregate=errors">
-        Downtime (in minutes)</a>
+<h3>Netstream availability</h3>
+<ul>
+    <li><a href="chart.html?fields=activemq-berylcoral:jvmThreadCount,aview-prod:jvmThreadCount,bandaid-diamondquartz:jvmThreadCount,bungie-lapiz:jvmThreadCount,bungie-topaz:jvmThreadCount,dnr-diamondquartz:jvmThreadCount,grandma-lapiz:jvmThreadCount,grandma-topaz:jvmThreadCount,halo-diamondquartz:jvmThreadCount,hector-diamondquartz:jvmThreadCount,knitware-diamondquartz:jvmThreadCount,lama-lapiz:jvmThreadCount,lama-topaz:jvmThreadCount,llustreamplus-diamondquartz:jvmThreadCount,ned-diamondquartz:jvmThreadCount,nemo-lapiz:jvmThreadCount,nemo-topaz:jvmThreadCount,pacman-amberamethyst:jvmThreadCount,pacman-diamondquartz:jvmThreadCount,penfold-diamondquartz:jvmThreadCount,puma-lapiz:jvmThreadCount,puma-topaz:jvmThreadCount,reportviewer-lapiz:jvmThreadCount,reportviewer-topaz:jvmThreadCount,scheduler-diamondquartz:jvmThreadCount,sideshow-diamondquartz:jvmThreadCount,spm-diamondquartz:jvmThreadCount,swish-lapiz:jvmThreadCount,swish-topaz:jvmThreadCount,troll-citrinesapphire:jvmThreadCount,twig-diamondquartz:jvmThreadCount,uma-lapiz:jvmThreadCount,uma-topaz:jvmThreadCount&days=14&aggregate=errors">
+        Downtime (in minutes) over the past 14 days</a>
+    </li>
+</ul>
+
+<h3>Pacman</h3>
+<ul>
+    <li><a href="chart.html?fields=pacman-amberamethyst:pacmanLineCheckerTotalRequests,pacman-amberamethyst:pacmanLineCheckerTotalFailures,pacman-amberamethyst:pacmanLineCheckerTotalExceptions,pacman-amberamethyst:pacmanDNCheckerTotalRequests,pacman-amberamethyst:pacmanDNCheckerTotalFailures,pacman-amberamethyst:pacmanDNCheckerTotalExceptions,pacman-amberamethyst:pacmanLluExchangeTotalRequests,pacman-amberamethyst:pacmanLluExchangeTotalFailures,pacman-amberamethyst:pacmanLluExchangeTotalExceptions,pacman-amberamethyst:pacmanPhoneLineInformationServiceTotalRequests,pacman-amberamethyst:pacmanPhoneLineInformationServiceTotalFailures,pacman-amberamethyst:pacmanPhoneLineInformationServiceTotalExceptions,pacman-amberamethyst:pacmanProductAvailabilityCheckerTotalRequests,pacman-amberamethyst:pacmanProductAvailabilityCheckerTotalFailures,pacman-amberamethyst:pacmanProductAvailabilityCheckerTotalExceptions,pacman-amberamethyst:xmlResponderTotalRequests,pacman-amberamethyst:xmlResponderTotalFailures,pacman-amberamethyst:xmlResponderTotalExceptions&days=7">
+        Pacman (amberamethyst) - Requests, Failures and Exceptions</a>
     </li>
 
+    <li><a href="chart.html?fields=pacman-amberamethyst:pacmanLineCheckerTotalFailures,pacman-amberamethyst:pacmanDNCheckerTotalFailures,pacman-amberamethyst:pacmanLluExchangeTotalFailures,pacman-amberamethyst:pacmanPhoneLineInformationServiceTotalFailures,pacman-amberamethyst:pacmanProductAvailabilityCheckerTotalFailures,pacman-amberamethyst:xmlResponderTotalFailures&days=7">
+        Pacman (amberamethyst) - Failures</a>
+    </li>
+
+    <li><a href="chart.html?fields=pacman-amberamethyst:pacmanLineCheckerTotalExceptions,pacman-amberamethyst:pacmanDNCheckerTotalExceptions,pacman-amberamethyst:pacmanLluExchangeTotalExceptions,pacman-amberamethyst:pacmanPhoneLineInformationServiceTotalExceptions,pacman-amberamethyst:pacmanProductAvailabilityCheckerTotalExceptions,pacman-amberamethyst:xmlResponderTotalExceptions&days=7">
+        Pacman (amberamethyst) - Exceptions</a>
+    </li>
 </ul>
 
 

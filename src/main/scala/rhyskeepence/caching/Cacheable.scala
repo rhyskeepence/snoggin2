@@ -8,7 +8,7 @@ trait Cacheable extends Aggregator {
   val cache = SnogginInjector.cache.vend
 
   abstract override def aggregate(environment: String, metricName: String, duration: Duration) = {
-    val cacheKey = "aggregation-%s-%s-%s".format(environment, metricName, duration.getStandardSeconds)
+    val cacheKey = "aggregation-%s-%s-%s-%s".format(getClass.getName, environment, metricName, duration.getStandardSeconds)
     val fromCache = cache.get(cacheKey)
     fromCache.getOrElse {
       val newValue = super.aggregate(environment, metricName, duration)
