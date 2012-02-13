@@ -5,7 +5,7 @@ import io.Source
 import org.joda.time.DateTime
 import rhyskeepence.model.{Metric, DataPoint}
 import collection.immutable.List
-import org.specs.{SpecificationWithJUnit, Specification}
+import org.specs.SpecificationWithJUnit
 
 class CsvStatisticsFileParserTest extends SpecificationWithJUnit with Mockito {
 

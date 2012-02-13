@@ -2,17 +2,16 @@ package rhyskeepence.legacyadaptor
 
 import akka.actor._
 import akka.actor.Actor._
+import akka.actor.Scheduler._
 import java.util.concurrent.TimeUnit
-import rhyskeepence.storage.MongoDataPointStore
 import net.liftweb.util.Props
-import org.scala_tools.time.Imports._
-import rhyskeepence.Clock
 import net.liftweb.common.Logger
+import org.scala_tools.time.Imports._
 import bootstrap.liftweb.SnogginInjector
-import rhyskeepence.caching.SnogginCache
+import rhyskeepence.Clock
+import rhyskeepence.storage.MongoDataPointStore
 
-class Loader(mongoStore: MongoDataPointStore, dataPointSource: FileToDataPointAdaptor, clock: Clock, cache: SnogginCache) extends Actor with Logger {
-
+class Loader(mongoStore: MongoDataPointStore, dataPointSource: FileToDataPointAdaptor, clock: Clock, subscriber: LoaderSubscriber) extends Actor with Logger {
   def receive = {
     case TriggerLoad =>
       val fromDate = mongoStore.lastModified.toDateMidnight.plusDays(1).toDateTime
@@ -24,7 +23,7 @@ class Loader(mongoStore: MongoDataPointStore, dataPointSource: FileToDataPointAd
           info("Loader: done inserting")
       }
 
-      cache.invalidate()
+      subscriber.notifyLoadFinished()
   }
 }
 
@@ -38,19 +37,19 @@ object Loader extends Logger {
   val cache = SnogginInjector.cache.vend
   val clock = SnogginInjector.clock.vend
   val mongoStore = SnogginInjector.mongoStore.vend
-
   val dataPointSource = new FileToDataPointAdaptor(
     new StatisticFileSource(collectionDirectory, clock),
     new CsvStatisticsFileParser
   )
+  val subscriber = new InvalidateCacheAfterLoad(cache)
 
   def start() = {
     val durationTillStart = calculateDurationToFirstLoad
     info("Scheduling next load at " + (clock.now + durationTillStart))
 
-    val contentLoadingActor = actorOf(new Loader(mongoStore, dataPointSource, clock, cache)).start()
+    val contentLoadingActor = actorOf(new Loader(mongoStore, dataPointSource, clock, subscriber)).start()
 
-    Scheduler.schedule(
+    schedule(
       contentLoadingActor,
       TriggerLoad,
       durationTillStart.getMillis,
