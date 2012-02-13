@@ -22,6 +22,10 @@ function formatNumber(x) {
 
 var plot;
 
+function notifyNoStats() {
+    $("#chart").html("Sorry, no data found!<br/><a href='/'>&lt;&lt; Back</a>")
+}
+
 function doPlot(axisDefinition) {
     $(function () {
 

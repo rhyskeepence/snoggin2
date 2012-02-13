@@ -2,3 +2,4 @@
 
 loader.directory=/Users/dev/tmp/production
 only.load.at.oneam=false
+udp.listen.port=8011

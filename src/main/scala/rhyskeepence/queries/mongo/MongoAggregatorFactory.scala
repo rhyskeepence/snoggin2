@@ -8,5 +8,5 @@ class MongoAggregatorFactory extends AggregatorFactory {
   def averagePerDay = new AveragePerDay with Cacheable
   def dailyThroughput = new DailyThroughput with Cacheable
   def errorsPerDay = new ErrorsPerDay with Cacheable
-  def noAggregation = new HighResolutionAverage with Cacheable
+  def noAggregation = new HighResolutionAverage
 }

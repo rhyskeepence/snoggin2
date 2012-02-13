@@ -15,8 +15,8 @@ class PlotChart {
   def render = {
     val fields =
       S.param("fields")
-        .map(_.split(",").toList)
-        .openOr(List[String]())
+        .map(_.split(",").toList.filter(!_.isEmpty))
+        .openOr(List())
 
     val aggregator = S.param("aggregate") match {
       case Full("sum") => aggregatorFactory.sumPerDay
@@ -44,7 +44,10 @@ class PlotChart {
           ("label", Str(aggregator.getLabel(environment, metricName) + " = 0")))
     }
 
-    Script(Call("doPlot", JsArray(allStats)))
+    if (allStats.isEmpty) 
+      Script(Call("notifyNoStats"))
+    else
+      Script(Call("doPlot", JsArray(allStats)))
   }
 
   private def dbObjectToJavascript(dbObject: DBObject) = {
@@ -63,5 +66,4 @@ class PlotChart {
       case _ => sys.error("malformed field: %s".format(field))
     }
   }
-
 }
