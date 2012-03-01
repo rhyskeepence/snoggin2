@@ -1,4 +1,4 @@
-package rhyskeepence.udp
+package rhyskeepence.datacollection.udp
 
 import net.liftweb.util.Props
 import net.liftweb.common.Logger

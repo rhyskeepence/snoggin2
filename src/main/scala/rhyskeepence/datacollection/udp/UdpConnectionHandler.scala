@@ -1,4 +1,4 @@
-package rhyskeepence.udp
+package rhyskeepence.datacollection.udp
 
 import java.net.DatagramPacket
 import rhyskeepence.model.{Metric, DataPoint}

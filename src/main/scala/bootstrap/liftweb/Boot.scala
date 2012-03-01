@@ -5,7 +5,7 @@ import _root_.net.liftweb.http._
 import _root_.net.liftweb.http.provider._
 import rhyskeepence.legacyadaptor.Loader
 import net.liftweb.util.Helpers
-import rhyskeepence.udp.UdpListener
+import rhyskeepence.datacollection.udp.UdpListener
 
 class Boot {
   def boot() {
