@@ -10,7 +10,7 @@ class HighResolutionAverage extends AverageAggregator {
       if (duration.getStandardSeconds > 86400)
         duration.getMillis / 1500
       else
-        5000 // 5 second buckets for single day charts
+        10000 // 10 second buckets for single day charts
 
     aggregate(sizeOfEachBucket, environment, metricName, duration)
   }

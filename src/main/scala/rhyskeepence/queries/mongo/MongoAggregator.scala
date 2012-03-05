@@ -24,7 +24,7 @@ trait MongoAggregator extends Aggregator {
     """
 
   def findNewerThan(duration: Duration) = {
-    val timeLimit = (clock.now - duration).toDateMidnight.getMillis
+    val timeLimit = (clock.now - duration).toDateMidnight.plusDays(1).getMillis
     Some(MongoDBObject("_id" -> MongoDBObject("$gt" -> timeLimit)))
   }
 }

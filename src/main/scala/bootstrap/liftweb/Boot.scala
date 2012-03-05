@@ -3,7 +3,6 @@ package bootstrap.liftweb
 import _root_.net.liftweb.common._
 import _root_.net.liftweb.http._
 import _root_.net.liftweb.http.provider._
-import rhyskeepence.legacyadaptor.Loader
 import net.liftweb.util.Helpers
 import rhyskeepence.datacollection.udp.UdpListener
 
@@ -27,12 +26,7 @@ class Boot {
         )
     }
 
-    Loader.start()
     UdpListener.start()
-
-    LiftRules.unloadHooks.append {
-      Loader.shutdown _
-    }
 
     LiftRules.unloadHooks.append {
       UdpListener.shutdown _

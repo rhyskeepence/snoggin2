@@ -6,10 +6,10 @@ import net.liftweb.http.js.JsCmds._
 import net.liftweb.http.SHtml._
 import net.liftweb.common.Full
 import net.liftweb.http.SHtml
-import bootstrap.liftweb.SnogginInjector
+import rhyskeepence.queries.mongo.FindApplicationMetric
 
 class Metrics {
-  val findApplicationMetric = SnogginInjector.findApplicationMetric.vend
+  val findApplicationMetric = new FindApplicationMetric
 
   var applicationName = ""
   var metricName = ""
