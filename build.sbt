@@ -29,6 +29,7 @@ libraryDependencies ++= Seq(
   "junit" % "junit" % "4.8" % "test->default",
   "org.mockito" % "mockito-all" % "1.8.5" % "test->default",
   "org.scala-tools.testing" %% "specs" % "1.6.9" % "test->default",
+  "org.hamcrest" % "hamcrest-all" % "1.1" % "test->default",
   "se.scalablesolutions.akka" % "akka-testkit" % "1.2" % "test->default",
   "org.mortbay.jetty" % "jetty" % "6.1.26" % "test,container"
 )
