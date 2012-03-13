@@ -5,13 +5,14 @@ import rhyskeepence.caching.SnogginCache
 import rhyskeepence.storage.{MongoDataPointStore, MongoStorage}
 import net.liftweb.http.Factory
 import rhyskeepence.queries.mongo.MongoAggregatorFactory
+import rhyskeepence.queries.AggregatorFactory
 
 object SnogginInjector extends Factory {
 
   implicit object clock extends FactoryMaker(() => clockInstance)
   private val clockInstance = new Clock
 
-  implicit object aggregatorFactory extends FactoryMaker(() => aggregatorFactoryInstance)
+  implicit object aggregatorFactory extends FactoryMaker[AggregatorFactory](() => aggregatorFactoryInstance)
   private val aggregatorFactoryInstance = new MongoAggregatorFactory
 
   implicit object mongoStore extends FactoryMaker(() => mongoStoreInstance)

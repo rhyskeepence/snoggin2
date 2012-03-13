@@ -9,7 +9,7 @@ import net.liftweb.common.Full
 import org.joda.time.Duration
 import bootstrap.liftweb.SnogginInjector
 
-class PlotChart {
+class PlotGraph {
   val aggregatorFactory = SnogginInjector.aggregatorFactory.vend
 
   def render = {

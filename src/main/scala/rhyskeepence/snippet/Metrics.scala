@@ -21,7 +21,7 @@ class Metrics {
     applicationName = applicationNames.head
 
     "#applications" #> select(applicationNames.map(app => (app, app)), Full(applicationName), applicationName = _, "onchange" -> onApplicationNameChange) &
-    "#metrics" #> untrustedSelect(findApplicationMetric.metricNamesFor(applicationName).map(app => (app, app)), Full(metricName), metricName = _, "id" -> "metric_select") &
+    "#metric_select" #> untrustedSelect(findApplicationMetric.metricNamesFor(applicationName).map(app => (app, app)), Full(metricName), metricName = _) &
     "#add_button" #> SHtml.ajaxSubmit("Add", () => Run("append_metric('" + applicationName + ":" + metricName + "')")) andThen SHtml.makeFormsAjax
   }
 

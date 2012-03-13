@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Noggin stats</title>
+    <title>Noggin graph</title>
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
@@ -18,8 +18,13 @@
             font-size: 18px;
             height: 85%;
         }
+        h1 {
+            font-size: 26px;
+            font-weight: 300;
+            text-rendering: optimizeLegibility;
+        }
         #chart {
-            width:95%;
+            width:100%;
             height:95%;
         }
 
@@ -36,9 +41,12 @@
 
 </head>
 <body>
+    <lift:echo_title>
+        <h1>Graph title</h1>
+    </lift:echo_title>
 
     <div id="chart">
-        Please wait a moment while this chart is rendered.
+        Please wait a moment while this graph is rendered.
     </div>
 
     <div id="extras">
@@ -46,7 +54,7 @@
         <div id="legend"></div>
     </div>
 
-    <lift:plot_chart />
+    <lift:plot_graph />
 
     <lift:msgs showAll="true" />
 
