@@ -1,6 +1,6 @@
 package rhyskeepence.queries.mongo
 
-import org.joda.time.Duration
+import org.joda.time.Interval
 
 trait AverageAggregator extends MongoAggregator with MongoQuery {
 
@@ -27,10 +27,10 @@ trait AverageAggregator extends MongoAggregator with MongoQuery {
     }
     """
 
-  def aggregate(millisecondsPerBucket: Long, environment: String, metricName: String, duration: Duration) = {
+  def aggregate(millisecondsPerBucket: Long, environment: String, metricName: String, interval: Interval) = {
       dataPointStore.mapReduce(
         environment,
-        findNewerThan(duration),
+        aggregateWithin(interval),
         map(metricName, millisecondsPerBucket),
         reduceFunc,
         Some(averageFunc))

@@ -1,18 +1,17 @@
 package rhyskeepence.queries.mongo
 
-import org.joda.time.Duration
+import org.joda.time.Interval
 
 class HighResolutionAverage extends AverageAggregator {
 
-  override def aggregate(environment: String, metricName: String, duration: Duration) = {
-
+  override def aggregate(environment: String, metricName: String, interval: Interval) = {
     val sizeOfEachBucket =
-      if (duration.getStandardSeconds > 86400)
-        duration.getMillis / 1500
+      if (interval.toDurationMillis < 86400)
+        30000 // 30 second buckets for less than 24 hrs (same day)
       else
-        10000 // 10 second buckets for single day charts
+        300000 // 5 minute buckets for 24 hr charts
 
-    aggregate(sizeOfEachBucket, environment, metricName, duration)
+    aggregate(sizeOfEachBucket, environment, metricName, interval)
   }
 
 }

@@ -8,8 +8,10 @@ import com.mongodb.BasicDBObject
 import net.liftweb.common.Full
 import org.joda.time.Duration
 import bootstrap.liftweb.SnogginInjector
+import org.scala_tools.time.Imports._
 
 class PlotGraph {
+  val clock = SnogginInjector.clock.vend
   val aggregatorFactory = SnogginInjector.aggregatorFactory.vend
 
   def render = {
@@ -34,7 +36,7 @@ class PlotGraph {
     val allStats = fields.map {
       field =>
         val (environment, metricName) = splitEnvironmentAndMetric(field)
-        val mongoObjects = aggregator.aggregate(environment, metricName, duration)
+        val mongoObjects = aggregator.aggregate(environment, metricName, intervalStartingFrom(duration))
         val dataPoints = mongoObjects.map {
           dbObject => dbObjectToJavascript(dbObject)
         }
@@ -66,4 +68,6 @@ class PlotGraph {
       case _ => sys.error("malformed field: %s".format(field))
     }
   }
+
+  private def intervalStartingFrom(duration: Duration) = new Interval(duration, clock.now)
 }

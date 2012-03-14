@@ -1,6 +1,7 @@
 package rhyskeepence.queries.mongo
 
-import org.joda.time.Duration
+import org.joda.time.Interval
+
 
 class ErrorsPerDay extends MongoAggregator with MongoQuery {
 
@@ -19,8 +20,13 @@ class ErrorsPerDay extends MongoAggregator with MongoQuery {
     }
   """
 
-  override def aggregate(environment: String, metricName: String, duration: Duration) = {
-    dataPointStore.mapReduce(environment, findNewerThan(duration), mapByDayIf10SecondOutage(metricName), sumReduction, Some(convertToMinutes))
+  override def aggregate(environment: String, metricName: String, interval: Interval) = {
+    dataPointStore.mapReduce(
+      environment,
+      aggregateWithin(interval),
+      mapByDayIf10SecondOutage(metricName),
+      sumReduction,
+      Some(convertToMinutes))
   }
 
   override def getLabel(environment: String, metricName: String) = {

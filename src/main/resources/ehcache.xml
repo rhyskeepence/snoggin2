@@ -3,9 +3,7 @@
          updateCheck="false"
          maxBytesLocalHeap="256M">
 
-    <defaultCache timeToLiveSeconds="3600" />
-
-    <cache name="snoggin" timeToLiveSeconds="3600">
+    <cache name="snoggin" statistics="true">
         <sizeOfPolicy maxDepth="100000" />
     </cache>
 </ehcache>

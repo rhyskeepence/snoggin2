@@ -5,12 +5,19 @@ import net.liftweb.mocks.MockHttpServletRequest
 import bootstrap.liftweb.SnogginInjector
 import org.specs.mock.Mockito
 import rhyskeepence.queries.{Aggregator, AggregatorFactory}
-import org.joda.time.Duration
+import rhyskeepence.Clock
+import org.scala_tools.time.Imports._
 
 class PlotGraphSpec extends WebSpec with Mockito {
 
   val aggregatorFactory = mock[AggregatorFactory]
   SnogginInjector.aggregatorFactory.default.set(() => aggregatorFactory)
+
+  val now = DateTime.now
+  val clock = mock[Clock]
+  clock.now returns now
+  SnogginInjector.clock.default.set(() => clock)
+
   val aggregator = mock[Aggregator]
   aggregator.aggregate(any, any, any) returns List()
 
@@ -58,13 +65,13 @@ class PlotGraphSpec extends WebSpec with Mockito {
     "use a default of 7 days as the aggregation time" withSFor (requestFor("/chart.html?fields=x:y")) in {
       aggregatorFactory.noAggregation returns aggregator
       plotGraphSnippet.render
-      there was one(aggregator).aggregate(any, any, be_==(Duration.standardDays(7)))
+      there was one(aggregator).aggregate(any, any, be_==(new Interval(7.days, now)))
     }
 
     "use the number of days specified as the aggregation time" withSFor (requestFor("/chart.html?fields=x:y&days=10")) in {
       aggregatorFactory.noAggregation returns aggregator
       plotGraphSnippet.render
-      there was one(aggregator).aggregate(any, any, be_==(Duration.standardDays(10)))
+      there was one(aggregator).aggregate(any, any, be_==(new Interval(10.days, now)))
     }
 
   }

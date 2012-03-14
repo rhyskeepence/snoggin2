@@ -1,8 +1,8 @@
 package rhyskeepence.queries.mongo
 
-import com.mongodb.casbah.commons.MongoDBObject
-import org.joda.time.Duration
+import org.joda.time.Interval
 import org.scala_tools.time.Imports._
+import com.mongodb.casbah.Imports._
 import rhyskeepence.queries.Aggregator
 import bootstrap.liftweb.SnogginInjector
 
@@ -23,8 +23,7 @@ trait MongoAggregator extends Aggregator {
     }
     """
 
-  def findNewerThan(duration: Duration) = {
-    val timeLimit = (clock.now - duration).toDateMidnight.plusDays(1).getMillis
-    Some(MongoDBObject("_id" -> MongoDBObject("$gt" -> timeLimit)))
+  def aggregateWithin(interval: Interval) = {
+    Some(("_id" $lt interval.end.millis $gt interval.start.millis))
   }
 }

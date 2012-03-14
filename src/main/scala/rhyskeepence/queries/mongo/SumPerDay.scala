@@ -1,6 +1,6 @@
 package rhyskeepence.queries.mongo
 
-import org.joda.time.Duration
+import org.joda.time.Interval
 
 class SumPerDay extends MongoAggregator with MongoQuery {
 
@@ -10,7 +10,12 @@ class SumPerDay extends MongoAggregator with MongoQuery {
       "  if (metric > 0) emit(this._id - (this._id % 86400000), { aggregate: metric } );" +
       "}"
 
-  override def aggregate(environment: String, metricName: String, duration: Duration) = {
-    dataPointStore.mapReduce(environment, findNewerThan(duration), mapByDayValuesGreaterThanZero(metricName), sumReduction, None)
+  override def aggregate(environment: String, metricName: String, interval: Interval) = {
+    dataPointStore.mapReduce(
+      environment,
+      aggregateWithin(interval),
+      mapByDayValuesGreaterThanZero(metricName),
+      sumReduction,
+      None)
   }
 }

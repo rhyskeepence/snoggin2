@@ -1,11 +1,11 @@
 package rhyskeepence.queries
 
 import com.mongodb.DBObject
-import org.joda.time.Duration
+import org.joda.time.Interval
 
 trait Aggregator {
 
-  def aggregate(environment: String, metricName: String, duration: Duration): List[DBObject]
+  def aggregate(environment: String, metricName: String, duration: Interval): List[DBObject]
 
   def getLabel(environment: String, metricName: String) = metricName + " (" + environment + ")"
 
