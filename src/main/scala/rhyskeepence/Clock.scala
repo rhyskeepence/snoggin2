@@ -1,9 +1,7 @@
 package rhyskeepence
 
-import org.scala_tools.time.Imports._
+import org.joda.time.DateTime
 
 class Clock {
   def now = DateTime.now
-
-  def midnight = now.toDateMidnight.toDateTime
 }

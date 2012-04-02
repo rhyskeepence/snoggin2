@@ -2,15 +2,14 @@ package rhyskeepence.caching
 
 import rhyskeepence.queries.Aggregator
 import bootstrap.liftweb.SnogginInjector
-import org.joda.time.Interval
-import org.scala_tools.time.Imports._
 import com.mongodb.DBObject
+import org.joda.time.{DateTimeZone, Interval}
 
 trait Cacheable extends Aggregator {
   val cache = SnogginInjector.cache.vend
 
   abstract override def aggregate(environment: String, metricName: String, interval: Interval) = {
-    Multiplexer.multiplex(interval) {
+    Multiplexer.multiplexDaily(interval) {
       singleDay =>
         getAggregation(environment, metricName, singleDay)
     }
@@ -28,23 +27,25 @@ trait Cacheable extends Aggregator {
 
   def cacheKeyFor(environment: String, metricName: String, interval: Interval) = {
     "aggregation-%s-%s-%s-%s-%s".format(
-      getClass.getName, environment, metricName, interval.start.millis, interval.duration.millis)
+      getType, environment, metricName, interval.getStart.getMillis, interval.toDuration.getMillis)
   }
 }
 
 object Multiplexer  {
-  def multiplex[T](interval: Interval)(f: Interval => List[T]): List[T] = {
+  def multiplexDaily[T](interval: Interval)(f: Interval => List[T]): List[T] = {
     splitIntervalIntoSingleDays(interval).flatMap(f)
   }
 
   private def splitIntervalIntoSingleDays(interval: Interval, result: List[Interval] = List()): List[Interval] = {
-    val start = interval.end.toDateMidnight
-    val end = interval.end
+    val intervalEndInUtc = interval.getEnd.toDateTime(DateTimeZone.UTC)
+    val start = intervalEndInUtc.toDateMidnight.toDateTime
+    val end = intervalEndInUtc
 
     val resultWithAddedInterval = new Interval(start, end) :: result
 
-    if (interval.contains(start)) {
-      splitIntervalIntoSingleDays(new Interval(interval.start, start.toDateTime.minusMillis(1)), resultWithAddedInterval)
+    val endOfNextInterval = start.minusMillis(1)
+    if (interval.contains(endOfNextInterval)) {
+      splitIntervalIntoSingleDays(new Interval(interval.getStart, endOfNextInterval), resultWithAddedInterval)
     } else {
       resultWithAddedInterval
     }

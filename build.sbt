@@ -5,7 +5,7 @@ scalaVersion := "2.9.1"
 seq(webSettings: _*)
 
 resolvers ++= Seq(
-  "Scala Tools Releases" at "http://scala-tools.org/repo-releases/",
+  "Scala Tools Releases" at "https://oss.sonatype.org/content/groups/scala-tools/",
   "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/",
   "Java.net" at "http://download.java.net/maven/2/"
 )
@@ -21,7 +21,8 @@ libraryDependencies ++= {
 libraryDependencies ++= Seq(
   "com.mongodb.casbah" %% "casbah" % "2.1.5-1",
   "se.scalablesolutions.akka" % "akka-actor" % "1.2",
-  "org.scala-tools.time" %% "time" % "0.5",
+  "joda-time" % "joda-time" % "2.1",
+  "org.joda" % "joda-convert" % "1.1",
   "javax.transaction" % "jta" % "1.1",
   "net.sf.ehcache" % "ehcache-core" % "2.5.1",
   "ch.qos.logback" % "logback-classic" % "0.9.26" % "compile->default",

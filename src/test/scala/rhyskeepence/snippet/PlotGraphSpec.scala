@@ -6,7 +6,7 @@ import bootstrap.liftweb.SnogginInjector
 import org.specs.mock.Mockito
 import rhyskeepence.queries.{Aggregator, AggregatorFactory}
 import rhyskeepence.Clock
-import org.scala_tools.time.Imports._
+import org.joda.time.{Period, Interval, DateTime}
 
 class PlotGraphSpec extends WebSpec with Mockito {
 
@@ -65,13 +65,13 @@ class PlotGraphSpec extends WebSpec with Mockito {
     "use a default of 7 days as the aggregation time" withSFor (requestFor("/chart.html?fields=x:y")) in {
       aggregatorFactory.noAggregation returns aggregator
       plotGraphSnippet.render
-      there was one(aggregator).aggregate(any, any, be_==(new Interval(7.days, now)))
+      there was one(aggregator).aggregate(any, any, be_==(new Interval(Period.days(7), now)))
     }
 
     "use the number of days specified as the aggregation time" withSFor (requestFor("/chart.html?fields=x:y&days=10")) in {
       aggregatorFactory.noAggregation returns aggregator
       plotGraphSnippet.render
-      there was one(aggregator).aggregate(any, any, be_==(new Interval(10.days, now)))
+      there was one(aggregator).aggregate(any, any, be_==(new Interval(Period.days(10), now)))
     }
 
   }

@@ -15,4 +15,6 @@ class DailyThroughput extends MongoAggregator with MongoQuery {
       sumReduction,
       None)
   }
+
+  def getType = "daily-throughput"
 }

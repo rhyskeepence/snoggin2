@@ -18,4 +18,6 @@ class SumPerDay extends MongoAggregator with MongoQuery {
       sumReduction,
       None)
   }
+
+  def getType = "sum-per-day"
 }

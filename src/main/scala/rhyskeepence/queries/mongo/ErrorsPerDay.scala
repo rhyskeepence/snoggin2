@@ -32,4 +32,6 @@ class ErrorsPerDay extends MongoAggregator with MongoQuery {
   override def getLabel(environment: String, metricName: String) = {
     environment + " - downtime (minutes)"
   }
+
+  def getType = "errors-per-day"
 }

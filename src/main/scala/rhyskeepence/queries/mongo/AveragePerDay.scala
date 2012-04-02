@@ -9,4 +9,6 @@ class AveragePerDay extends AverageAggregator {
   override def aggregate(environment: String, metricName: String, duration: Interval) = {
     aggregate(oneDay, environment, metricName, duration)
   }
+
+  def getType = "average-per-day"
 }

@@ -6,9 +6,8 @@ import net.liftweb.http.S
 import com.mongodb.casbah.Imports._
 import com.mongodb.BasicDBObject
 import net.liftweb.common.Full
-import org.joda.time.Duration
 import bootstrap.liftweb.SnogginInjector
-import org.scala_tools.time.Imports._
+import org.joda.time.{Interval, Period}
 
 class PlotGraph {
   val clock = SnogginInjector.clock.vend
@@ -28,15 +27,15 @@ class PlotGraph {
       case _ => aggregatorFactory.noAggregation
     }
 
-    val duration = S.param("days") match {
-      case Full(days) => Duration.standardDays(days.toLong)
-      case _ => Duration.standardDays(7)
+    val period = S.param("days") match {
+      case Full(days) => Period.days(days.toInt)
+      case _ => Period.days(7)
     }
 
     val allStats = fields.map {
       field =>
         val (environment, metricName) = splitEnvironmentAndMetric(field)
-        val mongoObjects = aggregator.aggregate(environment, metricName, intervalStartingFrom(duration))
+        val mongoObjects = aggregator.aggregate(environment, metricName, intervalStartingFrom(period))
         val dataPoints = mongoObjects.map {
           dbObject => dbObjectToJavascript(dbObject)
         }
@@ -69,5 +68,5 @@ class PlotGraph {
     }
   }
 
-  private def intervalStartingFrom(duration: Duration) = new Interval(duration, clock.now)
+  private def intervalStartingFrom(period: Period) = new Interval(period, clock.now)
 }

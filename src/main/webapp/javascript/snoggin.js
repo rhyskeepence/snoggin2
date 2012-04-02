@@ -88,7 +88,7 @@ function doPlot(axisDefinition) {
 
                 var d = new Date();
                 d.setTime(pos.x);
-                showDate(d.toGMTString());
+                showDate(d.toLocaleString());
             }
         }
 
