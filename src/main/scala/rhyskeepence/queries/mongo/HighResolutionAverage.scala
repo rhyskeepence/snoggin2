@@ -14,5 +14,5 @@ class HighResolutionAverage extends AverageAggregator {
     aggregate(sizeOfEachBucket, environment, metricName, interval)
   }
 
-  def getType = "high-res-average"
+  def aggregatorName = "high-res-average"
 }

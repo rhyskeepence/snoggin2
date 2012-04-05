@@ -19,5 +19,5 @@ class SumPerDay extends MongoAggregator with MongoQuery {
       None)
   }
 
-  def getType = "sum-per-day"
+  def aggregatorName = "sum-per-day"
 }

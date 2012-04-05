@@ -27,7 +27,7 @@ trait Cacheable extends Aggregator {
 
   def cacheKeyFor(environment: String, metricName: String, interval: Interval) = {
     "aggregation-%s-%s-%s-%s-%s".format(
-      getType, environment, metricName, interval.getStart.getMillis, interval.toDuration.getMillis)
+      aggregatorName, environment, metricName, interval.getStart.getMillis, interval.toDuration.getMillis)
   }
 }
 

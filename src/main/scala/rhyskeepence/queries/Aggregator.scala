@@ -9,6 +9,6 @@ trait Aggregator {
 
   def getLabel(environment: String, metricName: String) = metricName + " (" + environment + ")"
 
-  def getType: String
+  def aggregatorName: String
 }
 

@@ -36,9 +36,7 @@ class PlotGraph {
       field =>
         val (environment, metricName) = splitEnvironmentAndMetric(field)
         val mongoObjects = aggregator.aggregate(environment, metricName, intervalStartingFrom(period))
-        val dataPoints = mongoObjects.map {
-          dbObject => dbObjectToJavascript(dbObject)
-        }
+        val dataPoints = mongoObjects.map(dbObjectToJavascript)
 
         JsObj(
           ("data", JsArray(dataPoints)),
@@ -51,7 +49,7 @@ class PlotGraph {
       Script(Call("doPlot", JsArray(allStats)))
   }
 
-  private def dbObjectToJavascript(dbObject: DBObject) = {
+  private def dbObjectToJavascript: DBObject => JsArray = { dbObject =>
     val timestamp = dbObject.getAsOrElse[Double]("_id", 0)
     val value = dbObject.get("value") match {
       case b: BasicDBObject => b.getAsOrElse[Double]("aggregate", 0)

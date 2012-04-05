@@ -52,6 +52,6 @@ class CacheableSpec extends Specification with Mockito {
       List()
     }
 
-    def getType = "stub-aggregator"
+    def aggregatorName = "stub-aggregator"
   }
 }
