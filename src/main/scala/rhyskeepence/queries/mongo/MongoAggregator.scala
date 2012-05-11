@@ -23,6 +23,6 @@ trait MongoAggregator extends Aggregator {
     """
 
   def aggregateWithin(interval: Interval) = {
-    Some(("_id" $lt interval.getEndMillis $gt interval.getStartMillis))
+    Some(("_id" $lt interval.getEndMillis $gte interval.getStartMillis))
   }
 }
