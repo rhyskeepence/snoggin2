@@ -126,7 +126,7 @@
         function render() {
             var url = "chart.html?fields=" + metrics.join(",") + "&days=" + days;
             if (aggregator != "None") {
-                url += "&aggregator=" + aggregator;
+                url += "&aggregate=" + aggregator;
             }
             if (graphTitle != "") {
                 url += "&title=" + encodeURI(graphTitle);
