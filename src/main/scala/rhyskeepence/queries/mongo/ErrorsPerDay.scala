@@ -6,7 +6,7 @@ class ErrorsPerDay extends MongoAggregator with MongoQuery {
 
   def mapByDayIf10SecondOutage(metricName: String) =
     "function() { " +
-      "  var metric = this." + metricName + "; " +
+      "  var metric = this['" + metricName + "']; " +
       // each -1 is a 10 second outage
       "  if (metric == -1) emit(this._id - (this._id % 86400000), { aggregate: 10 } );" +
       "  else emit(this._id - (this._id % 86400000), { aggregate: 0 } );" +

@@ -5,7 +5,7 @@ import org.joda.time.Interval
 trait AverageAggregator extends MongoAggregator with MongoQuery {
 
   private def map(metricName: String, millisecondsPerBucket: Long) =
-    "function() { emit(this._id - (this._id % " + millisecondsPerBucket + "), { aggregate:0, count:1, sum: this." + metricName + " } );}"
+    "function() { emit(this._id - (this._id % " + millisecondsPerBucket + "), { aggregate:0, count:1, sum: this['" + metricName + "'] } );}"
 
   private val reduceFunc = """
     function (name, values) {

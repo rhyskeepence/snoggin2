@@ -18,9 +18,13 @@ class UdpConnectionHandler extends Actor with Logger {
 
       input match {
         case inputPattern(environment, metricName, value) =>
-          val metric = Metric(metricName, value.toDouble)
-          val dataPoint = DataPoint(System.currentTimeMillis(), environment, List(metric))
-          dataPointStore.write(dataPoint)
+          dataPointStore.write(
+            DataPoint(System.currentTimeMillis(), environment,
+              List(
+                Metric(metricName, value.toDouble)
+              )
+            )
+          )
 
         case _ =>
           error("Received invalid input: [%s] - must be in the format " +
