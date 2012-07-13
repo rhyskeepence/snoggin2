@@ -8,7 +8,7 @@ import net.liftweb.common.Logger
 import akka.actor.Actor
 
 class UdpConnectionHandler extends Actor with Logger {
-  val inputPattern = """(\w+):(\w+)=(\d+)""".r
+  val inputPattern = """([\w\-]+):([\w\-]+)=(\d+)""".r
   val dataPointStore = SnogginInjector.mongoStore.vend
 
   def receive = {
