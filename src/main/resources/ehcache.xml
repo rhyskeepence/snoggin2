@@ -1,9 +1,9 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="ehcache.xsd"
          updateCheck="false"
-         maxBytesLocalHeap="256M">
+         maxBytesLocalHeap="512M">
 
     <cache name="snoggin" statistics="true">
-        <sizeOfPolicy maxDepth="100000" />
+        <sizeOfPolicy maxDepth="250000" />
     </cache>
 </ehcache>
