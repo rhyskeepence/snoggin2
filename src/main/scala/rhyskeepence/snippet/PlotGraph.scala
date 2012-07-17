@@ -7,11 +7,14 @@ import com.mongodb.casbah.Imports._
 import com.mongodb.BasicDBObject
 import net.liftweb.common.Full
 import bootstrap.liftweb.SnogginInjector
-import org.joda.time.{Interval, Period}
+import org.joda.time.{DateTime, Interval, Period}
+import org.scala_tools.time.StaticDateTimeFormat
+import org.scala_tools.time.Imports._
 
 class PlotGraph {
   val clock = SnogginInjector.clock.vend
   val aggregatorFactory = SnogginInjector.aggregatorFactory.vend
+  val dateFormat = StaticDateTimeFormat.forPattern("dd-MM-yyyy")
 
   def render = {
     val fields =
@@ -27,15 +30,22 @@ class PlotGraph {
       case _ => aggregatorFactory.noAggregation
     }
 
-    val period = S.param("days") match {
-      case Full(days) => Period.days(days.toInt)
+    val optionalDateRange = for {
+      fromDate <- S.param("fromDate").flatMap(dateFormat.parseOption(_))
+      toDate <- S.param("toDate").flatMap(dateFormat.parseOption(_))
+    } yield new Interval(fromDate.plusDays(1), toDate.plusDays(1))
+
+    val daysToChart = S.param("days").map(_.toInt) match {
+      case Full(days) => Period.days(days)
       case _ => Period.days(7)
     }
+
+    val chartPeriod = optionalDateRange.getOrElse(intervalStartingFrom(daysToChart))
 
     val allStats = fields.map {
       field =>
         val (environment, metricName) = splitEnvironmentAndMetric(field)
-        val mongoObjects = aggregator.aggregate(environment, metricName, intervalStartingFrom(period))
+        val mongoObjects = aggregator.aggregate(environment, metricName, chartPeriod)
         val dataPoints = mongoObjects.map(dbObjectToJavascript)
 
         JsObj(

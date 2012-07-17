@@ -74,10 +74,13 @@
 <h1>Or, choose your own adventure</h1>
     <br/>
     Title (optional): <input type="text" id="graphTitle" onkeyup="graphTitle = this.value; render();" />  <br/><br/>
-    Graph duration: <input type="text" id="days" style="width: 40px" onkeyup="days = this.value; render();" /> days <br/><br/>
+    Graph duration: previous <input type="text" id="days" style="width: 40px" onkeyup="days = this.value; render();" /> days, or
+    from <input type="text" id="from_date" style="width: 120px" />
+    to   <input type="text" id="to_date" style="width: 120px" />
+    <br/><br/>
 
     Aggregator:
-    <select onchange="aggregator = this.value; render();">
+    <select id="aggregator_select" onchange="aggregator = this.value; render();">
         <option value="None">No aggregation, show detail</option>
         <option value="sum">Sum of all values, per day</option>
         <option value="average">Average of all values, per day</option>
@@ -117,6 +120,8 @@
         var days = 7;
         var metrics = new Array();
         var graphTitle = "";
+        var fromDate = "";
+        var toDate = "";
 
         function append_metric(name) {
             metrics.push(name);
@@ -124,7 +129,16 @@
         }
 
         function render() {
-            var url = "chart.html?fields=" + metrics.join(",") + "&days=" + days;
+            var url = "chart.html?fields=" + metrics.join(",");
+
+            if (fromDate != "" && toDate != "") {
+                url += "&fromDate=" + fromDate;
+                url += "&toDate=" + toDate;
+
+            } else {
+                url += "&days=" + days
+            }
+
             if (aggregator != "None") {
                 url += "&aggregate=" + aggregator;
             }
@@ -140,7 +154,26 @@
             $("#graphTitle").val(graphTitle);
             $("#days").val(days);
             $("#applications").prop("selectedIndex",0);
+            $("#metric_select").prop("selectedIndex",0);
+            $("#aggregator_select").prop("selectedIndex",0);
+
+            var onCloseFromDate = function(dateText, inst) {
+                var toDateSelector = $("#to_date");
+                if (dateText != "") {
+                   if (toDate == "") {
+                        toDateSelector.datepicker("setDate" , new Date() );
+                        toDate = toDateSelector.val();
+                   }
+                   toDateSelector.datepicker( "option", "minDate", $("#from_date").datepicker("getDate") );
+                }
+                fromDate = dateText;
+                render();
+            }
+            $("#from_date").datepicker({ minDate: "-1y", maxDate: new Date(), dateFormat: "dd-mm-yy", onClose: onCloseFromDate });
+            $("#to_date").datepicker({ minDate: "-1y", maxDate: new Date(), dateFormat: "dd-mm-yy", onClose: function(dateText, inst) { toDate = dateText; render(); } });
+
             render();
+
         });
 
     </script>
