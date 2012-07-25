@@ -5,6 +5,7 @@ scalaVersion := "2.9.1"
 seq(webSettings: _*)
 
 resolvers ++= Seq(
+  "rhys's releases" at "https://github.com/rhyskeepence/mvn-repo/raw/master/releases",
   "Scala Tools Releases" at "https://oss.sonatype.org/content/groups/scala-tools/",
   "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/",
   "Java.net" at "http://download.java.net/maven/2/"
@@ -32,5 +33,7 @@ libraryDependencies ++= Seq(
   "org.scala-tools.testing" %% "specs" % "1.6.9" % "test->default",
   "org.hamcrest" % "hamcrest-all" % "1.1" % "test->default",
   "se.scalablesolutions.akka" % "akka-testkit" % "1.2" % "test->default",
-  "org.mortbay.jetty" % "jetty" % "6.1.26" % "test,container"
+  "org.mortbay.jetty" % "jetty" % "6.1.26" % "test,container",
+  "rhyskeepence" %% "clairvoyance" % "13", 
+  "org.mockito" % "mockito-all" % "1.9.0"
 )

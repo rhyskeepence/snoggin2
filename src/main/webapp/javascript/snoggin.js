@@ -1,8 +1,5 @@
 function formatNumber(x) {
-    if ((x > -50) && (x < 50)) {
-        return x.toFixed(2);
-    }
-    return x.toFixed(0).toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+    return x.toFixed(1).toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
 }
 
 
@@ -30,9 +27,15 @@ function doPlot(axisDefinition) {
     $(function () {
 
         if ($.QueryString["aggregate"] == null) {
-            var series = {
-                lines: { show: true }
-            };
+            if ($.QueryString["series"] == "bars") {
+                var series = {
+                    bars: { show: true, barWidth: 1000*5, align: 'left' }
+                }
+            } else {
+                var series = {
+                    lines: { show: true }
+                };
+            }
         } else {
             var series = {
                 bars: {show: true, barWidth: 1000*60*60*24, align: 'left'}

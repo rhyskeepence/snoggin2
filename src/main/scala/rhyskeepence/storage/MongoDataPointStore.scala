@@ -6,7 +6,6 @@ import com.mongodb.casbah.query.Imports._
 import scala.collection.JavaConverters._
 import com.mongodb.casbah.commons.{MongoDBObjectBuilder, MongoDBObject}
 import com.mongodb.casbah.map_reduce.MapReduceInlineOutput
-import scala.collection.immutable.List
 
 class MongoDataPointStore(mongoStorage: MongoStorage) {
 
@@ -35,12 +34,11 @@ class MongoDataPointStore(mongoStorage: MongoStorage) {
     withCollection(environment) {
       _.find()
         .sort(MongoDBObject("_id" -> -1))
-        .limit(1)
-        .toList
-        .headOption
-        .map(mongoObj => mongoObj.keySet().asScala.toList)
-        .getOrElse(List[String]())
+        .limit(100)
+        .flatMap(mongoObj => mongoObj.keySet().asScala)
+        .toSet
         .filter(_ != "_id")
+        .toList.sorted
     }
   }
 

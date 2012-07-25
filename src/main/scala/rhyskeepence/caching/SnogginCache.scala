@@ -9,6 +9,12 @@ class SnogginCache {
     ehCache.put(new Element(key, value))
   }
 
+  def putShortLived[T](key: String, value: T) {
+    val element = new Element(key, value)
+    element.setTimeToLive(120)
+    ehCache.put(element)
+  }
+
   def get[T](key: String): Option[T] = {
     val element = ehCache.get(key)
     if (element != null)
