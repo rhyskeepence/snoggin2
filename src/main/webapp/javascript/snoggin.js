@@ -42,30 +42,71 @@ function doPlot(axisDefinition) {
             };
         }
 
-        plot = $.plot($("#chart"),
-            axisDefinition,
-            {
+        var options = {
                 xaxes:[
-                    { mode:'time' }
+                  { mode:'time' }
                 ],
                 yaxes:[
-                    { min:0, tickFormatter: formatNumber }
+                  { min:0, tickFormatter: formatNumber }
                 ],
                 series: series,
                 grid: {
-                    hoverable: true, autoHighlight: false
+                  hoverable: true, autoHighlight: false
                 },
                 crosshair: { mode: "x" },
+                selection: { mode: "x" },
                 legend:{ noColumns: 3, container: "#legend" }
+            };
+
+        plot = $.plot($("#chart"),
+            axisDefinition,
+            options);
+
+        var overview = $.plot($("#overview"),
+            axisDefinition,
+            {
+                series: series,
+                legend: { show: false },
+                xaxis: { ticks: [], mode: "time" },
+                yaxis: { ticks: [], min: 0, autoscaleMargin: 0.1 },
+                selection: { mode: "x" }
             });
 
-        var legends = $("#legend .legendLabel");
+        $("#chart").bind("plotselected", function (event, ranges) {
+            $("#clearSelection").show();
+            plot = $.plot($("#chart"), axisDefinition,
+                          $.extend(true, {}, options, {
+                              xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to }
+                          }));
+
+            overview.setSelection(ranges, true);
+        });
+
+        $("#overview").bind("plotselected", function (event, ranges) {
+            plot.setSelection(ranges);
+        });
+
+        $('#clearSelection').click(clearSelection);
+        $("#chart").bind("plotunselected", clearSelection);
+        $("#overview").bind("plotunselected", clearSelection);
+
         var updateLegendTimeout = null;
         var latestPosition = null;
+
+        function clearSelection() {
+            $("#clearSelection").hide();
+            plot = $.plot($("#chart"), axisDefinition,
+                       $.extend(true, {},options, {
+                             xaxis: { min: plot.getData()[0].xaxis.datamin, max: plot.getData()[0].xaxis.datamax }
+                       }));
+
+            overview.clearSelection();
+        }
 
         function updateLegend() {
             updateLegendTimeout = null;
 
+            var legends = $("#legend .legendLabel");
             var pos = latestPosition;
 
             var axes = plot.getAxes();
