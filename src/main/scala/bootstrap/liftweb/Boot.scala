@@ -4,12 +4,12 @@ import _root_.net.liftweb.common._
 import _root_.net.liftweb.http._
 import _root_.net.liftweb.http.provider._
 import net.liftweb.util.Helpers
-import rhyskeepence.datacollection.udp.UdpListener
+import snoggin.datacollection.udp.UdpListener
 
 class Boot {
   def boot() {
 
-    LiftRules.addToPackages("rhyskeepence")
+    LiftRules.addToPackages("snoggin")
 
     LiftRules.ajaxStart = Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
     LiftRules.ajaxEnd = Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)

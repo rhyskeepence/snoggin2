@@ -1,5 +1,7 @@
 name := "Scala Noggin"
 
+version := System.getProperty("build.number", "DEV-BUILD")
+
 scalaVersion := "2.9.1"
 
 seq(webSettings: _*)

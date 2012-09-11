@@ -1,11 +1,11 @@
 package bootstrap.liftweb
 
-import rhyskeepence.Clock
-import rhyskeepence.caching.SnogginCache
-import rhyskeepence.storage.{MongoDataPointStore, MongoStorage}
+import snoggin.Clock
+import snoggin.caching.SnogginCache
+import snoggin.storage.{MongoDataPointStore, MongoStorage}
 import net.liftweb.http.Factory
-import rhyskeepence.queries.mongo.MongoAggregatorFactory
-import rhyskeepence.queries.AggregatorFactory
+import snoggin.queries.mongo.MongoAggregatorFactory
+import snoggin.queries.AggregatorFactory
 
 object SnogginInjector extends Factory {
 
