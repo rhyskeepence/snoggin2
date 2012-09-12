@@ -7,9 +7,10 @@ scalaVersion := "2.9.1"
 seq(webSettings: _*)
 
 resolvers ++= Seq(
-  "rhys's releases" at "https://github.com/rhyskeepence/mvn-repo/raw/master/releases",
+  "sns releases" at "http://repo.sns.sky.com:8081/artifactory/libs-releases",
   "Scala Tools Releases" at "https://oss.sonatype.org/content/groups/scala-tools/",
   "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/",
+  "rhys's releases" at "https://github.com/rhyskeepence/mvn-repo/raw/master/releases",
   "Java.net" at "http://download.java.net/maven/2/"
 )
 
