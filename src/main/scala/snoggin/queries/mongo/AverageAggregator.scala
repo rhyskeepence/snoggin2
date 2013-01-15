@@ -11,7 +11,7 @@ trait AverageAggregator extends MongoAggregator with MongoQuery {
     function (name, values) {
       var result = { aggregate:0, count:0, sum:0 };
       values.forEach(function(f) {
-        if (f.sum > -1) {
+        if (f.sum != null && f.sum > -1) {
           result.sum += f.sum;
           result.count += f.count;
         }

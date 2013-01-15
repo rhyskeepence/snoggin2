@@ -9,3 +9,6 @@ libraryDependencies <+= sbtVersion(v => v match {
 resolvers += "rhys's releases" at "https://github.com/rhyskeepence/mvn-repo/raw/master/releases"
 
 addSbtPlugin("com.gu" % "sbt-teamcity-test-reporting-plugin" % "1.2")
+
+addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.2.0")
+
