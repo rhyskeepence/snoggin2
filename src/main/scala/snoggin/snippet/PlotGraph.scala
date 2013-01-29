@@ -22,14 +22,6 @@ class PlotGraph {
         .map(_.split(",").toList.filter(!_.isEmpty))
         .openOr(List())
 
-    val aggregator = S.param("aggregate") match {
-      case Full("sum") => aggregatorFactory.sumPerDay
-      case Full("average") => aggregatorFactory.averagePerDay
-      case Full("dailythroughput") => aggregatorFactory.dailyThroughput
-      case Full("errors") => aggregatorFactory.errorsPerDay
-      case _ => aggregatorFactory.noAggregation
-    }
-
     val optionalDateRange = for {
       fromDate <- S.param("fromDate").flatMap(dateFormat.parseOption(_))
       toDate <- S.param("toDate").flatMap(dateFormat.parseOption(_))
@@ -41,6 +33,16 @@ class PlotGraph {
     }
 
     val chartPeriod = optionalDateRange.getOrElse(intervalStartingFrom(daysToChart))
+
+    val aggregator = S.param("aggregate") match {
+      case Full("sum") => aggregatorFactory.sumPerDay
+      case Full("average") => aggregatorFactory.averagePerDay
+      case Full("dailythroughput") => aggregatorFactory.dailyThroughput
+      case Full("errors") => aggregatorFactory.errorsPerDay
+      case _ =>
+        if (chartPeriod.duration > 1.day.standardDuration) aggregatorFactory.noAggregationMultipleDays
+        else aggregatorFactory.noAggregationOneDay
+    }
 
     val allStats = fields.map {
       field =>

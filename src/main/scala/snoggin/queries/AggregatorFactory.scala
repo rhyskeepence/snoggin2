@@ -5,5 +5,6 @@ trait AggregatorFactory {
   def averagePerDay: Aggregator
   def dailyThroughput: Aggregator
   def errorsPerDay: Aggregator
-  def noAggregation: Aggregator
+  def noAggregationOneDay: Aggregator
+  def noAggregationMultipleDays: Aggregator
 }

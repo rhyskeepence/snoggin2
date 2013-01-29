@@ -26,14 +26,14 @@ class PlotGraphSpec extends WebSpec with Mockito {
   "The Plot Graph snippet" should {
 
     "tokenize fields and call aggregator" withSFor (requestFor("/chart.html?fields=halo:oranges,knitware:bananas")) in {
-      aggregatorFactory.noAggregation returns aggregator
+      aggregatorFactory.noAggregationMultipleDays returns aggregator
       plotGraphSnippet.render
       there was one(aggregator).aggregate(be_==("halo"), be_==("oranges"), any)
       there was one(aggregator).aggregate(be_==("knitware"), be_==("bananas"), any)
     }
 
     "use the default aggregator when no aggregate parameter is specified" withSFor (requestFor("/chart.html?fields=x:y")) in {
-      aggregatorFactory.noAggregation returns aggregator
+      aggregatorFactory.noAggregationMultipleDays returns aggregator
       plotGraphSnippet.render
       there was one(aggregator).aggregate(any, any, any)
     }
@@ -63,15 +63,21 @@ class PlotGraphSpec extends WebSpec with Mockito {
     }
 
     "use a default of 7 days as the aggregation time" withSFor (requestFor("/chart.html?fields=x:y")) in {
-      aggregatorFactory.noAggregation returns aggregator
+      aggregatorFactory.noAggregationMultipleDays returns aggregator
       plotGraphSnippet.render
       there was one(aggregator).aggregate(any, any, be_==(new Interval(Period.days(7), now)))
     }
 
     "use the number of days specified as the aggregation time" withSFor (requestFor("/chart.html?fields=x:y&days=10")) in {
-      aggregatorFactory.noAggregation returns aggregator
+      aggregatorFactory.noAggregationMultipleDays returns aggregator
       plotGraphSnippet.render
       there was one(aggregator).aggregate(any, any, be_==(new Interval(Period.days(10), now)))
+    }
+
+    "use the single day aggregator" withSFor (requestFor("/chart.html?fields=x:y&days=1")) in {
+      aggregatorFactory.noAggregationOneDay returns aggregator
+      plotGraphSnippet.render
+      there was one(aggregator).aggregate(any, any, be_==(new Interval(Period.days(1), now)))
     }
 
   }
