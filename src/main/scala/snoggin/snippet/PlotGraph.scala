@@ -10,11 +10,18 @@ import bootstrap.liftweb.SnogginInjector
 import org.joda.time.{DateTime, Interval, Period}
 import org.scala_tools.time.StaticDateTimeFormat
 import org.scala_tools.time.Imports._
+import net.liftweb.http.js.JE.Call
+import net.liftweb.common.Full
+import net.liftweb.http.js.JE.Str
+import collection.immutable.Iterable
+import net.liftweb.http.js.JsObj
+import net.liftweb.http.js.JE.JsObj
 
 class PlotGraph {
   val clock = SnogginInjector.clock.vend
   val aggregatorFactory = SnogginInjector.aggregatorFactory.vend
   val dateFormat = StaticDateTimeFormat.forPattern("dd-MM-yyyy")
+  type Stats = Map[String, Map[Double, Double]]
 
   def render = {
     val fields =
@@ -44,34 +51,40 @@ class PlotGraph {
         else aggregatorFactory.noAggregationOneDay
     }
 
-    val allStats = fields.map {
-      field =>
-        val (environment, metricName) = splitEnvironmentAndMetric(field)
-        val mongoObjects = aggregator.aggregate(environment, metricName, chartPeriod)
-        val dataPoints = mongoObjects.map(dbObjectToJavascript)
+    val stats: Stats = fields
+      .map(splitEnvironmentAndMetric)
+      .map { case (environment, metricName) =>
+        aggregator.getLabel(environment, metricName) -> aggregator.aggregate(environment, metricName, chartPeriod).map(dbObjectToTuple).toMap
+      }
+      .toMap
+
+    val jsDataPoints: List[JsObj] = stats.toList.map {
+      case (label, values) =>
+        val javascriptValues = values.toList.map {
+          case (timestamp, value) => JsArray(timestamp, value)
+        }
 
         JsObj(
-          ("data", JsArray(dataPoints)),
-          ("label", Str(aggregator.getLabel(environment, metricName) + " = 0")))
+          ("data", JsArray(javascriptValues)),
+          ("label", Str(label + " = 0")))
     }
 
-    if (allStats.isEmpty) 
+    if (jsDataPoints.isEmpty)
       Script(Call("notifyNoStats"))
     else
-      Script(Call("doPlot", JsArray(allStats)))
+      Script(Call("doPlot", JsArray(jsDataPoints)))
   }
 
-  private def dbObjectToJavascript: DBObject => JsArray = { dbObject =>
+  private def dbObjectToTuple: DBObject => (Double,Double) = { dbObject =>
     val timestamp = dbObject.getAsOrElse[Double]("_id", 0)
     val value = dbObject.get("value") match {
       case b: BasicDBObject => b.getAsOrElse[Double]("aggregate", 0)
       case _ => 0
     }
-
-    JsArray(timestamp, value)
+    (timestamp, value)
   }
   
-  private def splitEnvironmentAndMetric(field: String) = {
+  private def splitEnvironmentAndMetric: String => (String,String) = { field =>
     field.split(":") match {
       case Array(environment, metric) => (environment, metric)
       case _ => sys.error("malformed field: %s".format(field))

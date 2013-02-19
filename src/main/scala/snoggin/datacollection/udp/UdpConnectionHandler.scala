@@ -13,24 +13,24 @@ class UdpConnectionHandler extends Actor with Logger {
 
   def receive = {
     case IncomingConnection(packet) =>
-      val input = Source.fromBytes(packet.getData).getLines().next().trim
-      info("Incoming connection from " + packet.getAddress + " with data " + input)
+      Source.fromBytes(packet.getData).getLines().map(_.trim).foreach { input =>
 
-      input match {
-        case inputPattern(environment, metricName, value) =>
-          dataPointStore.write(
-            DataPoint(System.currentTimeMillis(), environment,
-              List(
-                Metric(metricName, value.toDouble)
+        info("Incoming connection from " + packet.getAddress + " with data " + input)
+
+        input match {
+          case inputPattern(environment, metricName, value) =>
+            dataPointStore.write(
+              DataPoint(System.currentTimeMillis(), environment,
+                List(
+                  Metric(metricName, value.toDouble)
+                )
               )
             )
-          )
 
-        case _ =>
-          error("Received invalid input: [%s] - must be in the format " +
-            "'[environment]:[metric-name]=[numeric-value]'".format(input))
+          case _ =>
+            error("Received invalid input: [%s] - must be in the format '[environment]:[metric-name]=[numeric-value]'".format(input))
+        }
       }
-
   }
 }
 
