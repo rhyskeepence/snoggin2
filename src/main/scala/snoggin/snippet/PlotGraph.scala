@@ -51,16 +51,25 @@ class PlotGraph {
         else aggregatorFactory.noAggregationOneDay
     }
 
-    val stats: Stats = fields
-      .map(splitEnvironmentAndMetric)
-      .map { case (environment, metricName) =>
-        aggregator.getLabel(environment, metricName) -> aggregator.aggregate(environment, metricName, chartPeriod).map(dbObjectToTuple).toMap
-      }
-      .toMap
 
-    val jsDataPoints: List[JsObj] = stats.toList.map {
+    val stats: Stats = fields
+    .map(splitEnvironmentAndMetric)
+    .map { case (environment, metricName) =>
+      aggregator.getLabel(environment, metricName) -> aggregator.aggregate(environment, metricName, chartPeriod).map(dbObjectToTuple).toMap
+    }
+    .toMap
+
+    val groupedStats: Map[String, Map[Double, Double]] = S.param("semigroup") match {
+      case Full("product") => {
+        val key = stats.keys.mkString(" multiplied by ")
+        Map(key -> multiplyMapValues(stats))
+      }
+      case _ => stats
+    }
+
+    val jsDataPoints: List[JsObj] = groupedStats.toList.map {
       case (label, values) =>
-        val javascriptValues = values.toList.map {
+        val javascriptValues = values.toList.sortBy(_._1).map {
           case (timestamp, value) => JsArray(timestamp, value)
         }
 
@@ -73,6 +82,17 @@ class PlotGraph {
       Script(Call("notifyNoStats"))
     else
       Script(Call("doPlot", JsArray(jsDataPoints)))
+  }
+
+
+  def multiplyMapValues(stats: Stats): Map[Double, Double] = {
+    stats.values.reduceLeft {
+      (seed, next) => next.map {
+        case (timestamp, value) =>
+          val seedValue = seed.get(timestamp).getOrElse(1.0)
+          (timestamp, value * seedValue)
+      }
+    }
   }
 
   private def dbObjectToTuple: DBObject => (Double,Double) = { dbObject =>
