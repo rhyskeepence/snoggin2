@@ -62,7 +62,11 @@ class PlotGraph {
     val groupedStats: Map[String, Map[Double, Double]] = S.param("semigroup") match {
       case Full("product") => {
         val key = stats.keys.mkString(" multiplied by ")
-        Map(key -> multiplyMapValues(stats))
+        Map(key -> combineMapValues(stats, multiply))
+      }
+      case Full("divide") => {
+        val key = stats.keys.mkString(" divided by ")
+        Map(key -> combineMapValues(stats, divide))
       }
       case _ => stats
     }
@@ -84,15 +88,26 @@ class PlotGraph {
       Script(Call("doPlot", JsArray(jsDataPoints)))
   }
 
-
-  def multiplyMapValues(stats: Stats): Map[Double, Double] = {
+  def combineMapValues(stats: Stats, semigroup: (Double, Double) => Double): Map[Double, Double] = {
     stats.values.reduceLeft {
       (seed, next) => next.map {
         case (timestamp, value) =>
           val seedValue = seed.get(timestamp).getOrElse(1.0)
-          (timestamp, value * seedValue)
+          (timestamp, semigroup(seedValue, value))
       }
     }
+  }
+
+
+  def multiply(a: Double, b: Double): Double = {
+    a * b
+  }
+
+  def divide(a: Double, b: Double): Double = {
+    if (b != 0)
+      a / b
+    else
+      0
   }
 
   private def dbObjectToTuple: DBObject => (Double,Double) = { dbObject =>
