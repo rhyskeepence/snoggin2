@@ -1,5 +1,2 @@
 # Properties in this file will be read when running in dev mode
-
-loader.directory=/Users/dev/tmp/production
-only.load.at.oneam=false
 udp.listen.port=8011

@@ -1,8 +1,30 @@
 <lift:surround with="default" at="content">
 
-<h1>Noggin charts</h1>
+<h1>Noggin graphs</h1>
 
 <h3>Queues</h3>
+<ul>
+    <li><a href="chart.html?fields=activemq-berylcoral:ActiveMqllustreamToColliderEnqueueCountThroughputPerSecond,activemq-berylcoral:ActiveMqllustreamToColliderDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput&title=LlustreamplusToCollider%20Queue%20-%20daily%20enqueue/dequeue%20count">
+        LlustreamplusToCollider Queue - daily enqueue/dequeue count</a>
+    </li>
+
+    <li><a href="chart.html?fields=activemq-berylcoral:ActiveMqcolliderToLlustreamEnqueueCountThroughputPerSecond,activemq-berylcoral:ActiveMqcolliderToLlustreamDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput&title=ColliderToLlustreamplus%20Queue%20-%20daily%20enqueue/dequeue%20count">
+        ColliderToLlustreamplus Queue - daily enqueue/dequeue count</a>
+    </li>
+</ul>
+
+<h3>Queue Graph Builder</h3>
+<lift:queue_graph_builder>
+    <form>
+        Queue:
+        <select id="brokers"></select>
+        <select id="queues"></select>
+        <select id="function"></select>
+        <a href="#" id="render_button" class="btn">Render</a>
+    </form>
+</lift:queue_graph_builder>
+
+<h3>Netstream availability</h3>
 <ul>
     <li><a href="chart.html?fields=activemq-berylcoral:jvmThreadCount&days=7&title=Active%20MQ%20-%20thread%20usage%20over%20the%20past%207%20days">
         Active MQ - thread usage over the past 7 days</a>
@@ -16,46 +38,18 @@
         Active MQ - memory usage over the past 7 days</a>
     </li>
 
-    <li><a href="chart.html?fields=activemq-berylcoral:ActiveMqhaloInternalEnqueueCountThroughputPerSecond,activemq-berylcoral:ActiveMqhaloInternalDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput&title=&title=HaloInternal%20Queue%20-%20daily%20enqueue/dequeue%20count">
-        HaloInternal Queue - daily enqueue/dequeue count</a>
+    <li><a href="chart.html?fields=activemq-berylcoral:jvmThreadCount,aview-prod:jvmThreadCount,bandaid-diamondquartz:jvmThreadCount,bungie-lapiz:jvmThreadCount,bungie-topaz:jvmThreadCount,dnr-diamondquartz:jvmThreadCount,grandma-lapiz:jvmThreadCount,grandma-topaz:jvmThreadCount,halo-diamondquartz:jvmThreadCount,hector-diamondquartz:jvmThreadCount,knitware-diamondquartz:jvmThreadCount,lama-lapiz:jvmThreadCount,lama-topaz:jvmThreadCount,llustreamplus-diamondquartz:jvmThreadCount,ned-diamondquartz:jvmThreadCount,nemo-lapiz:jvmThreadCount,nemo-topaz:jvmThreadCount,pacman-amberamethyst:jvmThreadCount,pacman-diamondquartz:jvmThreadCount,penfold-diamondquartz:jvmThreadCount,puma-lapiz:jvmThreadCount,puma-topaz:jvmThreadCount,reportviewer-lapiz:jvmThreadCount,reportviewer-topaz:jvmThreadCount,scheduler-diamondquartz:jvmThreadCount,sideshow-diamondquartz:jvmThreadCount,spm-diamondquartz:jvmThreadCount,swish-lapiz:jvmThreadCount,swish-topaz:jvmThreadCount,troll-citrinesapphire:jvmThreadCount,twig-diamondquartz:jvmThreadCount,uma-lapiz:jvmThreadCount,uma-topaz:jvmThreadCount&days=7&aggregate=errors&title=Downtime%20(in%20minutes)%20over%20the%20past%2014%20days">
+        Downtime (in minutes) over the past 7 days</a>
     </li>
 
-    <li><a href="chart.html?fields=activemq-berylcoral:ActiveMqhaloToKnitwareEnqueueCountThroughputPerSecond,activemq-berylcoral:ActiveMqhaloToKnitwareDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput&title=HaloToKnitware%20Queue%20-%20daily%20enqueue/dequeue%20count">
-        HaloToKnitware Queue - daily enqueue/dequeue count</a>
-    </li>
-
-    <li><a href="chart.html?fields=activemq-berylcoral:ActiveMqcolliderToLlustreamEnqueueCountThroughputPerSecond,activemq-berylcoral:ActiveMqcolliderToLlustreamDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput&title=ColliderToLlustreamplus%20Queue%20-%20daily%20enqueue/dequeue%20count">
-        ColliderToLlustreamplus Queue - daily enqueue/dequeue count</a>
-    </li>
-
-    <li><a href="chart.html?fields=activemq-berylcoral:ActiveMqhaloToSideshowEnqueueCountThroughputPerSecond,activemq-berylcoral:ActiveMqhaloToSideshowDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput&title=HaloToSideshow%20Queue%20-%20daily%20enqueue/dequeue%20count">
-        HaloToSideshow Queue - daily enqueue/dequeue count</a>
-    </li>
-
-    <li><a href="chart.html?fields=activemq-berylcoral:ActiveMqhectorToHaloEnqueueCountThroughputPerSecond,activemq-berylcoral:ActiveMqhectorToHaloDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput&title=HectorToHalo%20Queue%20-%20daily%20enqueue/dequeue%20count">
-        HectorToHalo Queue - daily enqueue/dequeue count</a>
-    </li>
-
-     <li><a href="chart.html?fields=activemq-berylcoral:ActiveMqllustreamToColliderEnqueueCountThroughputPerSecond,activemq-berylcoral:ActiveMqllustreamToColliderDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput&title=LlustreamplusToCollider%20Queue%20-%20daily%20enqueue/dequeue%20count">
-        LlustreamplusToCollider Queue - daily enqueue/dequeue count</a>
-    </li>
-
-    <li><a href="chart.html?fields=activemq-berylcoral:ActiveMqnedToHaloEnqueueCountThroughputPerSecond,activemq-berylcoral:ActiveMqnedToHaloDequeueCountThroughputPerSecond&days=7&aggregate=dailythroughput&title=NedToHalo%20Queue%20-%20daily%20enqueue/dequeue%20count">
-        NedToHalo Queue - daily enqueue/dequeue count</a>
-    </li>
-</ul>
-
-<h3>Netstream availability</h3>
-<ul>
-    <li><a href="chart.html?fields=activemq-berylcoral:jvmThreadCount,aview-prod:jvmThreadCount,bandaid-diamondquartz:jvmThreadCount,bungie-lapiz:jvmThreadCount,bungie-topaz:jvmThreadCount,dnr-diamondquartz:jvmThreadCount,grandma-lapiz:jvmThreadCount,grandma-topaz:jvmThreadCount,halo-diamondquartz:jvmThreadCount,hector-diamondquartz:jvmThreadCount,knitware-diamondquartz:jvmThreadCount,lama-lapiz:jvmThreadCount,lama-topaz:jvmThreadCount,llustreamplus-diamondquartz:jvmThreadCount,ned-diamondquartz:jvmThreadCount,nemo-lapiz:jvmThreadCount,nemo-topaz:jvmThreadCount,pacman-amberamethyst:jvmThreadCount,pacman-diamondquartz:jvmThreadCount,penfold-diamondquartz:jvmThreadCount,puma-lapiz:jvmThreadCount,puma-topaz:jvmThreadCount,reportviewer-lapiz:jvmThreadCount,reportviewer-topaz:jvmThreadCount,scheduler-diamondquartz:jvmThreadCount,sideshow-diamondquartz:jvmThreadCount,spm-diamondquartz:jvmThreadCount,swish-lapiz:jvmThreadCount,swish-topaz:jvmThreadCount,troll-citrinesapphire:jvmThreadCount,twig-diamondquartz:jvmThreadCount,uma-lapiz:jvmThreadCount,uma-topaz:jvmThreadCount&days=14&aggregate=errors&title=Downtime%20(in%20minutes)%20over%20the%20past%2014%20days">
-        Downtime (in minutes) over the past 14 days</a>
-    </li>
     <li><a href="chart.html?fields=aview-prod:databaseborrowedConnectionsCount,bandaid-diamondquartz:databaseNumBusyConnections,dnr-diamondquartz:databaseNumBusyConnections,hector-diamondquartz:databaseNumBusyConnections,knitware-diamondquartz:databaseNumBusyConnections,llustreamplus-diamondquartz:databaseNumBusyConnections,ned-diamondquartz:databaseNumBusyConnections,pacman-amberamethyst:databaseNumBusyConnections,pacman-diamondquartz:databaseNumBusyConnections,penfold-diamondquartz:databaseNumBusyConnections,sideshow-diamondquartz:databaseNumBusyConnections,spm-diamondquartz:databaseNumBusyConnections,twig-diamondquartz:databaseNumBusyConnections,orca-diamondquartz:database-collider_userNumBusyConnections,orca-diamondquartz:database-rolo_userNumBusyConnections,fttc-diamondquartz:databaseNumBusyConnections,halo-diamondquartz:databaseNumBusyConnections&days=7&title=Database%20connections%20in%20use">
         Netstream Database connections in use</a>
     </li>
+
     <li><a href="chart.html?fields=orca-diamondquartz:database-collider_userNumBusyConnections,orca-diamondquartz:database-rolo_userNumBusyConnections,fttc-diamondquartz:databaseNumBusyConnections,halo-diamondquartz:databaseNumBusyConnections&days=7&title=Halo%20LHC%20Database%20Connections%20In%20Use">
-    Halo LHC Database Connections in use</a>
+        Halo LHC Database Connections in use</a>
     </li>
+
     <li><a href="chart.html?fields=bungie-lapiz:databaseNumBusyConnections,bungie-topaz:databaseNumBusyConnections,grandma-lapiz:databaseNumBusyConnections,grandma-topaz:databaseNumBusyConnections,lama-lapiz:databaseNumBusyConnections,lama-topaz:databaseNumBusyConnections,nemo-lapiz:databaseNumBusyConnections,nemo-topaz:databaseNumBusyConnections,puma-lapiz:databaseNumBusyConnections,puma-topaz:databaseNumBusyConnections,reportviewer-lapiz:databaseNumBusyConnections,reportviewer-topaz:databaseNumBusyConnections,swish-lapiz:databaseNumBusyConnections,swish-topaz:databaseNumBusyConnections,uma-lapiz:databaseNumBusyConnections,uma-topaz:databaseNumBusyConnections&days=7&title=Database%20connections%20in%20use">
         NIM Database connections in use</a>
     </li>
@@ -79,13 +73,13 @@
 <hr/>
 <h1>Or, choose your own adventure</h1>
     <br/>
-    Title (optional): <input type="text" id="graphTitle" onkeyup="graphTitle = this.value; render();" />  <br/><br/>
-    Graph duration: previous <input type="text" id="days" style="width: 40px" onkeyup="days = this.value; render();" /> days, or
+    <span id="title_help">Title (optional)</span>: <input type="text" id="graphTitle" onkeyup="graphTitle = this.value; render();" />  <br/><br/>
+    <span id="duration_help">Graph duration</span>: previous <input type="text" id="days" style="width: 40px" onkeyup="days = this.value; render();" /> days, or
     from <input type="text" id="from_date" style="width: 120px" />
     to   <input type="text" id="to_date" style="width: 120px" />
     <br/><br/>
 
-    Aggregator:
+    <span id="aggregator_help">Aggregator</span>:
     <select id="aggregator_select" onchange="aggregator = this.value; render();">
         <option value="None">No aggregation, show detail</option>
         <option value="sum">Sum of all values, per day</option>
@@ -97,9 +91,21 @@
     <br/>
     <br/>
 
+    <span id="semigroup_help">Aggregator</span>:
+    <select id="semigroup_select" onchange="semigroup = this.value; render();">
+        <option value="none">Don't combine metrics</option>
+        <option value="add">Addition</option>
+        <option value="subtract">Subtraction</option>
+        <option value="multiply">Multiplication</option>
+        <option value="divide">Division</option>
+    </select>
+
+    <br/>
+    <br/>
+
     <lift:Metrics>
         <form>
-            Application / metric:
+            <span id="metric_help">Application / metric</span>:
             <select id="applications"></select>
 
             <span style="display:none" id="ajax-loader">
@@ -128,6 +134,7 @@
         var graphTitle = "";
         var fromDate = "";
         var toDate = "";
+        var semigroup = "";
 
         function append_metric(name) {
             metrics.push(name);
@@ -151,6 +158,9 @@
             if (graphTitle != "") {
                 url += "&title=" + encodeURI(graphTitle);
             }
+            if (semigroup != "") {
+                url += "&semigroup=" + encodeURI(semigroup);
+            }
 
             $("#generated_url").html(url);
             $("#clickable").attr("href", url);
@@ -162,6 +172,7 @@
             $("#applications").prop("selectedIndex",0);
             $("#metric_select").prop("selectedIndex",0);
             $("#aggregator_select").prop("selectedIndex",0);
+            $("#semigroup_select").prop("selectedIndex",0);
 
             var onCloseFromDate = function(dateText, inst) {
                 var toDateSelector = $("#to_date");
@@ -178,14 +189,37 @@
             $("#from_date").datepicker({ minDate: "-1y", maxDate: new Date(), dateFormat: "dd-mm-yy", onClose: onCloseFromDate });
             $("#to_date").datepicker({ minDate: "-1y", maxDate: new Date(), dateFormat: "dd-mm-yy", onClose: function(dateText, inst) { toDate = dateText; render(); } });
 
+            $("#title_help").qtip({
+                content: 'Optional title displayed above the graph'
+            });
+
+            $("#duration_help").qtip({
+                content: 'Specify either a number of days (0 for today only, 1 for yesterday, etc), or choose an inclusive date range by clicking from and to'
+            });
+
+            $("#aggregator_help").qtip({
+                content: 'Aggregate each metric using an aggregator.<br/><br/>The <em>sum per day</em> aggregator will show the total of all values each day, for each metric.<br/>The <em>average per day</em> aggregator will show the average of all values each day, for each metric.<br/>The <em>downtime per day</em> aggregator will show the total number of seconds each day when the application could not be reached.<br/>The <em>daily throughput</em> aggregator is used for -ThroughputPerSecond metrics, and will show the daily queue throughput.<br/>'
+            });
+
+            $("#semigroup_help").qtip({
+                content: 'A semigroup is a operation that can be used to combine all of the chosen metrics into a single line segment. For example, to see the total number of pending items in all queues, add all queueSize metrics to the graph and choose the add semigroup'
+            });
+
+            $("#metric_help").qtip({
+                content: 'Choose an application followed by metric, then click add.'
+            });
+
+
             render();
 
         });
+
 
     </script>
 
     <hr/>
     <h1>UDP Listener</h1>
-    <p>Ad-hoc metrics can be inserted by sending a UDP message to port 8011. The payload must be in the format:</p><pre>[application]:[metric-name]=[numeric-value]</pre>
+    <p>Ad-hoc metrics can be inserted by sending a UDP message to port <lift:udp_port></lift:udp_port>.
+        The payload must be in the format:</p><pre>[application]:[metric-name]=[numeric-value]</pre>
 
 </lift:surround>

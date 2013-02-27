@@ -1,10 +1,12 @@
 package bootstrap.liftweb
 
-import _root_.net.liftweb.common._
-import _root_.net.liftweb.http._
-import _root_.net.liftweb.http.provider._
+import net.liftweb.common._
+import net.liftweb.http._
+import net.liftweb.http.provider._
+import net.liftweb.util.Helpers._
 import net.liftweb.util.Helpers
 import snoggin.datacollection.udp.UdpListener
+import snoggin.restful.SnogginRestService
 
 class Boot {
   def boot() {
@@ -14,8 +16,11 @@ class Boot {
     LiftRules.ajaxStart = Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
     LiftRules.ajaxEnd = Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
 
+    LiftRules.unusedFunctionsLifeTime = 1.hour
+
     LiftRules.early.append(makeUtf8)
     LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
+    LiftRules.statelessDispatchTable.append(SnogginRestService)
 
     LiftRules.defaultHeaders = {
       case _ =>
