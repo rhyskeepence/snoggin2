@@ -1,0 +1,3 @@
+mongo.host=localhost
+mongo.port=11526
+udp.listen.port=11527

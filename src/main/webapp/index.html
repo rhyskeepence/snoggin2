@@ -1,5 +1,12 @@
 <lift:surround with="default" at="content">
 
+<div id="ajax-loader" style="display:none;">
+    <div style="position: absolute; top: 50%; left: 50%; width: 100%">
+        <img src="/images/ajax-loader.gif" style="vertical-align: middle;"/> Loading...
+    </div>
+    <div style="position: absolute; top: 0; left: 0; height: 100%; width: 100%; line-height: 20px; text-align: center; background-color: #aaa; opacity: 0.1;"></div>
+</div>
+
 <h1>Noggin graphs</h1>
 
 <h3>Queues</h3>
@@ -107,11 +114,6 @@
         <form>
             <span id="metric_help">Application / metric</span>:
             <select id="applications"></select>
-
-            <span style="display:none" id="ajax-loader">
-                <img src="/images/ajax-loader.gif" style="vertical-align: middle;" width="20" height="20"/>
-            </span>
-
             <select id="metric_select"></select>
             <a href="#" id="add_button" class="btn">Add</a>
         </form>
