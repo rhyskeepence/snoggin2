@@ -12,9 +12,10 @@ import snoggin.StatsGeneration._
 import snoggin.{StatsGeneration, StatsRequestParser}
 
 class PlotGraph {
+  val requestParser = new StatsRequestParser()
 
   def render() = {
-    val statsRequest = StatsRequestParser.buildStatsRequest
+    val statsRequest = requestParser.buildStatsRequest
     val stats = StatsGeneration.generateStats(statsRequest)
     renderAsJavascript(stats)
   }

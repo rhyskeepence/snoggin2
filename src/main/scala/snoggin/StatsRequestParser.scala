@@ -7,7 +7,7 @@ import org.scala_tools.time.StaticDateTimeFormat
 import org.scala_tools.time.Imports._
 import net.liftweb.common.Full
 
-object StatsRequestParser {
+class StatsRequestParser {
   val clock = SnogginInjector.clock.vend
   val aggregatorFactory = SnogginInjector.aggregatorFactory.vend
   val dateFormat = StaticDateTimeFormat.forPattern("dd-MM-yyyy")
