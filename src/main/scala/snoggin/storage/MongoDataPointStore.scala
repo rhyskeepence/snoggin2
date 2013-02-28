@@ -42,17 +42,16 @@ class MongoDataPointStore(mongoStorage: MongoStorage) {
     }
   }
 
-  private def dataPointToMongoObject: (DataPoint) => MongoDBObjectBuilder = {
-    item =>
-      val contentItemBuilder = MongoDBObject.newBuilder
-      contentItemBuilder += "_id" -> item.timestamp
+  private def dataPointToMongoObject: (DataPoint) => MongoDBObjectBuilder = item => {
+    val contentItemBuilder = MongoDBObject.newBuilder
+    contentItemBuilder += "_id" -> item.timestamp
 
-      item.metrics.foreach {
-        metric =>
-          contentItemBuilder += metric.name -> metric.value
-      }
+    item.metrics.foreach {
+      metric =>
+        contentItemBuilder += metric.name -> metric.value
+    }
 
-      contentItemBuilder
+    contentItemBuilder
   }
 
   private def withCollection[T](environment: String)(doWithContent: MongoCollection => T) = {
