@@ -98,7 +98,7 @@
     <br/>
     <br/>
 
-    <span id="semigroup_help">Aggregator</span>:
+    <span id="semigroup_help">Semigroup</span>:
     <select id="semigroup_select" onchange="semigroup = this.value; render();">
         <option value="none">Don't combine metrics</option>
         <option value="add">Addition</option>
@@ -204,7 +204,7 @@
             });
 
             $("#semigroup_help").qtip({
-                content: 'A semigroup is a operation that can be used to combine all of the chosen metrics into a single line segment. For example, to see the total number of pending items in all queues, add all queueSize metrics to the graph and choose the add semigroup'
+                content: 'A semigroup is an operation that can be used to combine all of the chosen metrics into a single line segment. For example, to see the total number of pending items in all queues, add all QueueSize metrics to the graph and choose the <em>Addition<em> semigroup'
             });
 
             $("#metric_help").qtip({
