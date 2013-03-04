@@ -1,18 +1,18 @@
 package snoggin.storage
 
-import snoggin.model.DataPoint
 import com.mongodb.casbah.MongoCollection
-import com.mongodb.casbah.query.Imports._
 import scala.collection.JavaConverters._
-import com.mongodb.casbah.commons.{MongoDBObjectBuilder, MongoDBObject}
+import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.casbah.map_reduce.MapReduceInlineOutput
+import com.mongodb.casbah.commons.Imports._
+import snoggin.model.DataPoint
 
 class MongoDataPointStore(mongoStorage: MongoStorage) {
 
   def write(dataPoint: DataPoint) {
     withCollection(dataPoint.environment) {
       dbCollection =>
-        dbCollection += dataPointToMongoObject(dataPoint).result
+        dbCollection += dataPointToMongoObject(dataPoint)
     }
   }
 
@@ -42,7 +42,7 @@ class MongoDataPointStore(mongoStorage: MongoStorage) {
     }
   }
 
-  private def dataPointToMongoObject: (DataPoint) => MongoDBObjectBuilder = item => {
+  private def dataPointToMongoObject: (DataPoint) => DBObject = item => {
     val contentItemBuilder = MongoDBObject.newBuilder
     contentItemBuilder += "_id" -> item.timestamp
 
@@ -51,7 +51,7 @@ class MongoDataPointStore(mongoStorage: MongoStorage) {
         contentItemBuilder += metric.name -> metric.value
     }
 
-    contentItemBuilder
+    contentItemBuilder.result()
   }
 
   private def withCollection[T](environment: String)(doWithContent: MongoCollection => T) = {
