@@ -3,58 +3,58 @@ package snoggin
 import com.mongodb.casbah.Imports._
 import net.liftweb.common.Full
 import com.mongodb.BasicDBObject
+import snoggin.Stats._
 
 object StatsGeneration {
-  type StatName = String
-  type Timestamp = Double
-  type StatValue = Double
-  type Stats = Map[StatName, Map[Timestamp, StatValue]]
 
   def generateStats(statsRequest: StatsRequest): Stats = {
     val aggregator = statsRequest.aggregator
 
-    val stats: Stats = statsRequest.fields
+    val stats = statsRequest.fields
       .map(splitEnvironmentAndMetric)
       .map {
         case (environment, metricName) =>
-          aggregator.getLabel(environment, metricName) -> aggregator.aggregate(environment, metricName, statsRequest.chartPeriod).map(dbObjectToTuple).toMap
-      }.toMap
+          aggregator.getLabel(environment, metricName) ->
+            aggregator.aggregate(environment, metricName, statsRequest.chartPeriod)
+              .map(dbObjectToTuple)
+              .toMap
+      }
 
     statsRequest.semigroup match {
       case Full("multiply") => {
         val key = stats.keys.mkString(" multiplied by ")
-        Map(key -> combineMapValues(stats, multiply))
+        Stats(Seq(key -> combineMapValues(stats, multiply)))
       }
       case Full("divide") => {
         val key = stats.keys.mkString(" divided by ")
-        Map(key -> combineMapValues(stats, divide))
+        Stats(Seq(key -> combineMapValues(stats, divide)))
       }
       case Full("add") => {
         val key = stats.keys.mkString(" plus ")
-        Map(key -> combineMapValues(stats, add))
+        Stats(Seq(key -> combineMapValues(stats, add)))
       }
       case Full("subtract") => {
         val key = stats.keys.mkString(" minus ")
-        Map(key -> combineMapValues(stats, subtract))
+        Stats(Seq(key -> combineMapValues(stats, subtract)))
       }
       case _ => stats
     }
   }
 
-  private def splitEnvironmentAndMetric: String => (String,String) = { field =>
+  private def splitEnvironmentAndMetric: String => (String,String) = field => {
     field.split(":") match {
       case Array(environment, metric) => (environment, metric)
       case _ => sys.error("malformed field: %s".format(field))
     }
   }
 
-  private def dbObjectToTuple: DBObject => (Timestamp,StatValue) = { dbObject =>
-    val timestamp = dbObject.getAsOrElse[Double]("_id", 0)
-    val value = dbObject.get("value") match {
-      case b: BasicDBObject => b.getAsOrElse[Double]("aggregate", 0)
-      case _ => 0
-    }
-    (timestamp, value)
+  private def dbObjectToTuple: DBObject => (Timestamp, StatValue) = dbObject => {
+      val timestamp = dbObject.getAsOrElse[Double]("_id", 0)
+      val value = dbObject.get("value") match {
+        case b: BasicDBObject => b.getAsOrElse[Double]("aggregate", 0)
+        case _ => 0
+      }
+      (timestamp, value)
   }
 
   private def combineMapValues(stats: Stats, semigroup: (StatValue, StatValue) => StatValue): Map[Timestamp, StatValue] = {

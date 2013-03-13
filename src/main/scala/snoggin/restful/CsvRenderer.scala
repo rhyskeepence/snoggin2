@@ -1,6 +1,7 @@
 package snoggin.restful
 
-import snoggin.StatsGeneration._
+import snoggin.Stats
+import snoggin.Stats._
 import org.scala_tools.time.Imports._
 
 object CsvRenderer {
@@ -32,5 +33,4 @@ object CsvRenderer {
   def renderTimestamp(timestamp: Double) = {
     new DateTime(timestamp.toLong).toString("yyyy-MM-dd HH:mm:ss.SSS")
   }
-
 }

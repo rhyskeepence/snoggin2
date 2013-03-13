@@ -8,8 +8,8 @@ import net.liftweb.http.js.JE.Str
 import net.liftweb.http.js.JsObj
 import net.liftweb.http.js.JE.JsObj
 import xml.Node
-import snoggin.StatsGeneration._
 import snoggin.{StatsGeneration, StatsRequestParser}
+import snoggin.Stats
 
 class PlotGraph {
   val requestParser = new StatsRequestParser()
@@ -21,7 +21,7 @@ class PlotGraph {
   }
 
   def renderAsJavascript(groupedStats: Stats): Node = {
-    val jsDataPoints: List[JsObj] = groupedStats.toList.map {
+    val jsDataPoints: List[JsObj] = groupedStats.data.toList.map {
       case (label, values) =>
         val javascriptValues = values.toList.sortBy(_._1).map {
           case (timestamp, value) => JsArray(timestamp, value)
