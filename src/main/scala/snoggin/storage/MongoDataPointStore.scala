@@ -9,13 +9,6 @@ import snoggin.model.DataPoint
 
 class MongoDataPointStore(mongoStorage: MongoStorage) {
 
-  def write(dataPoint: DataPoint) {
-    withCollection(dataPoint.environment) {
-      dbCollection =>
-        dbCollection += dataPointToMongoObject(dataPoint)
-    }
-  }
-
   def mapReduce(environment: String, query: Option[DBObject], map: JSFunction, reduce: JSFunction, finalizeFunction: Option[JSFunction]) = {
     withCollection(environment) {
       _.mapReduce(map, reduce, MapReduceInlineOutput, query, None, None, finalizeFunction).toList
@@ -40,18 +33,6 @@ class MongoDataPointStore(mongoStorage: MongoStorage) {
         .filter(_ != "_id")
         .toList.sorted
     }
-  }
-
-  private def dataPointToMongoObject: (DataPoint) => DBObject = item => {
-    val contentItemBuilder = MongoDBObject.newBuilder
-    contentItemBuilder += "_id" -> item.timestamp
-
-    item.metrics.foreach {
-      metric =>
-        contentItemBuilder += metric.name -> metric.value
-    }
-
-    contentItemBuilder.result()
   }
 
   private def withCollection[T](environment: String)(doWithContent: MongoCollection => T) = {

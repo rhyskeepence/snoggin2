@@ -5,7 +5,6 @@ import net.liftweb.http._
 import net.liftweb.http.provider._
 import net.liftweb.util.Helpers._
 import net.liftweb.util.Helpers
-import snoggin.datacollection.udp.UdpListener
 import snoggin.restful.SnogginRestService
 
 class Boot {
@@ -30,13 +29,6 @@ class Boot {
           "Expires" -> Helpers.toInternetDate(Helpers.now.getTime + 3600000)
         )
     }
-
-    UdpListener.start()
-
-    LiftRules.unloadHooks.append {
-      UdpListener.shutdown _
-    }
-
   }
 
   private def makeUtf8(req: HTTPRequest) {
